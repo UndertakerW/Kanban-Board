@@ -8,7 +8,6 @@ from kanban.forms import LoginForm, RegisterForm
 from kanban.models import Profile
 
 # Function name:    compute_context
-# url:
 # Usage:            Compute the HTTP context
 # Parameter:        The http request.
 # Return:           HTTP context
@@ -24,6 +23,18 @@ def compute_context(request):
     context['full_name'] = fullname
     return context
 
+# Function name:    _status_check
+# Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
+# Parameter:        An action function
+# Return:           A wrapped function
+def _status_check(action_function):
+    def my_wrapper_function(request, *args, **kwargs):
+        profile = Profile.objects.get(user=request.user)
+        if not profile.authentication_status:
+            return render(request, 'kanban/2fa.html')
+        return action_function(request, *args, **kwargs)
+    return my_wrapper_function
+
 # Naming regulation: For better understanding, the actions should all name
 # in: {name}_action
 
@@ -34,6 +45,7 @@ def compute_context(request):
 # Parameter:        The http request.
 # Return:
 @login_required
+@_status_check
 def home_action(request):
     context = {}
     render(request, "kanban/profile.html", context)
@@ -67,7 +79,7 @@ def login_action(request):
     login(request, new_user)
     return redirect(reverse('home'))
 
-
+@login_required
 def logout_action(request):
     context = {}
     render(request, "kanban/login.html", context)
@@ -108,27 +120,32 @@ def register_action(request):
     login(request, new_user)
     return redirect(reverse('home'))
 
-
+@login_required
+@_status_check
 def create_workspace_action(request):
     context = {}
     render(request, "kanban/workspace.html", context)
 
-
+@login_required
+@_status_check
 def edit_workspace_name_action(request):
     context = {}
     render(request, "kanban/workspace.html", context)
 
-
+@login_required
+@_status_check
 def create_task_action(request):
     context = {}
     render(request, "kanban/task.html", context)
 
-
+@login_required
+@_status_check
 def edit_task_action(request):
     context = {}
     render(request, "kanban/task.html", context)
 
-
+@login_required
+@_status_check
 def edit_user_profile(request):
     context = {}
     render(request, "kanban/profile.html", context)
