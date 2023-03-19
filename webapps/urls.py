@@ -15,7 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from kanban import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', views.home_action, name='home'),
+    path('login', views.login_action, name='login'),
+    path('logout', views.logout_action, name='logout'),
+    path('register', views.register_action, name='register'),
+    path('create_workspace', views.create_workspace_action, name='create_workspace'),
+    path('edit_workspace_name', views.edit_workspace_name_action, name='edit_workspace_name_action'),
+    path('create_task', views.create_task_action, name='create_task'),
+    path('edit_task', views.edit_task_action, name='edit_task'),
+    path('edit_user_profile', views.edit_user_profile, name='edit_user_profile'),
 ]
