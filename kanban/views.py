@@ -1,6 +1,26 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.contrib.auth.models import User
+from kanban.forms import LoginForm, RegisterForm
+from django.contrib.auth import authenticate, login, logout
 
+# Function name:    compute_context
+# url:
+# Usage:            Compute the HTTP context
+# Parameter:        The http request.
+# Return:           HTTP context
+def compute_context(request):
+    context = {}
+    username = None
+    fullname = None
+    if request.user.is_authenticated:
+        user = User.objects.get(username=request.user.username)
+        username = user.username
+        fullname = user.first_name + ' ' + user.last_name
+    context['username'] = username
+    context['full_name'] = fullname
+    return context
 
 # Naming regulation: For better understanding, the actions should all name
 # in: {name}_action
@@ -23,8 +43,27 @@ def home_action(request):
 # Parameter:        The http request.
 # Return:
 def login_action(request):
-    context = {}
-    render(request, "kanban/login.html", context)
+    context = compute_context(request)
+
+    # Just display the registration form if this is a GET request.
+    if request.method == 'GET':
+        context['form'] = LoginForm()
+        return render(request, 'kanban/login.html', context)
+
+    # Creates a bound form from the request POST parameters and makes the
+    # form available in the request context dictionary.
+    form = LoginForm(request.POST)
+    context['form'] = form
+
+    # Validates the form.
+    if not form.is_valid():
+        return render(request, 'kanban/login.html', context)
+
+    new_user = authenticate(username=form.cleaned_data['username'],
+                            password=form.cleaned_data['password'])
+
+    login(request, new_user)
+    return redirect(reverse('home'))
 
 
 def logout_action(request):

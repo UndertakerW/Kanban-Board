@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
-# Model name:               Registration
+# Model name:               Profile
 # Usage:                    When a new user register for the app, he should input the following info
 # username:                 The identification of a user
 # password:                 The password for the user
@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 # register_type:            To identify the user is registered from OAuth, or directly register
 # authentication_status:    After registration, the user must complete a 2fa before use any
 #                           function of the app. If he does not complete it, the status is False.
-class Registration(models.Model):
+class Profile(models.Model):
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=200)
     confirm_password = models.CharField(max_length=200)
