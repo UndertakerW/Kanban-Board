@@ -4,22 +4,11 @@ from django.contrib.auth.models import User
 
 # Model name:               Profile
 # Usage:                    When a new user register for the app, he should input the following info
-# username:                 The identification of a user
-# password:                 The password for the user
-# confirm_password:         Re-input the password to make sure it is correct
-# email:                    The email of the user
-# first_name:               The first name of the user
-# last_name:                The last_name of the user
-# register_type:            To identify the user is registered from OAuth, or directly register
+# register_type:            To identify the user is registered on our website or from OAuth
 # authentication_status:    After registration, the user must complete a 2fa before use any
-#                           function of the app. If he does not complete it, the status is False.
+#                           function of the app. If they do not complete it, the status is False.
 class Profile(models.Model):
-    username = models.CharField(max_length=20)
-    password = models.CharField(max_length=200)
-    confirm_password = models.CharField(max_length=200)
-    email = models.EmailField(max_length=50)
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="profile_user")
     register_type = models.CharField(max_length=20)
     authentication_status = models.BooleanField(default=False)
 

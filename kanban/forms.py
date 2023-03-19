@@ -35,12 +35,41 @@ class LoginForm(forms.Form):
         return cleaned_data
 
 
-class RegisterForm(forms.ModelForm):
+class RegisterForm(forms.Form):
 
-    class Meta:
-        model = Profile
-        exclude = ['register_type', 'authentication_status']
-        widgets = {'password': forms.PasswordInput(), 'confirm_password': forms.PasswordInput()}
+    username   = forms.CharField(max_length=20, widget=forms.TextInput(
+            attrs={
+                'id': 'id_username',
+            }
+        ))
+    password1  = forms.CharField(max_length=200,
+                                 label='Password', 
+                                 widget=forms.PasswordInput(
+            attrs={
+                    'id': 'id_password',
+            }))
+    password2  = forms.CharField(max_length=200,
+                                 label='Confirm password',  
+                                 widget=forms.PasswordInput(
+            attrs={
+                    'id': 'id_confirm_password',
+            }))
+    email      = forms.CharField(max_length=50,
+                                 widget = forms.EmailInput(
+            attrs={
+                    'id': 'id_email',
+            }))
+    first_name = forms.CharField(max_length=20, widget=forms.TextInput(
+            attrs={
+                'id': 'id_first_name',
+            }
+        ))
+    last_name  = forms.CharField(max_length=20, widget=forms.TextInput(
+            attrs={
+                'id': 'id_last_name',
+            }
+        ))
+    
 
     # Customizes form validation for properties that apply to more
     # than one field.  Overrides the forms.Form.clean function.
@@ -50,9 +79,9 @@ class RegisterForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         # Confirms that the two password fields match
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
-        if password and confirm_password and password != confirm_password:
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords did not match.")
 
         # We must return the cleaned data we got from our parent.
