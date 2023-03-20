@@ -4,8 +4,8 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
-from kanban.forms import LoginForm, RegisterForm
-from kanban.models import Profile
+from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm
+from kanban.models import Profile, Workspace
 
 # Function name:    compute_context
 # Usage:            Compute the HTTP context
@@ -52,10 +52,10 @@ def home_action(request):
 
 
 # Function name:    login_action
-# url:              login
+# url:              /login
 # Usage:            Deal with the login action.
 # Parameter:        The http request.
-# Return:
+# Return:           render() or redirect()
 def login_action(request):
     context = compute_context(request)
 
@@ -84,7 +84,11 @@ def logout_action(request):
     context = {}
     render(request, "kanban/login.html", context)
 
-
+# Function name:    register_action
+# url:              /register
+# Usage:            Deal with the register action.
+# Parameter:        The http request.
+# Return:           render() or redirect()
 def register_action(request):
     context = compute_context(request)
 
@@ -120,11 +124,46 @@ def register_action(request):
     login(request, new_user)
     return redirect(reverse('home'))
 
+# Function name:    home_action
+# url:              /
+# Usage:            Deal with the home action.
+# Parameter:        The http request.
+# Return:           render() or redirect()
+@login_required
+@_status_check
+def home_action(request):
+    return
+    #TODO
+
+# Function name:    create_workspace_action
+# url:              /workspace/create
+# Usage:            Deal with the create workspace action.
+# Parameter:        The http request.
+# Return:           render() or redirect()
 @login_required
 @_status_check
 def create_workspace_action(request):
-    context = {}
-    render(request, "kanban/workspace.html", context)
+    if request.method == 'GET':
+        return home_action(request)
+
+    workspace = Workspace()
+
+    workspace.creator = request.user
+
+    new_workspace_form = NewWorkspaceForm(request.POST, instance=workspace)
+
+    if not new_workspace_form.is_valid():
+        context = compute_context(request)
+        return render(request, 'kanban/home.html', context)
+
+    new_workspace_form.save()
+
+    message = 'Workspace created'
+    
+    context = compute_context(request)
+    context['message'] = message
+    context['new_post_form'] = NewWorkspaceForm()
+    return render(request, 'kanban/home.html', context)
 
 @login_required
 @_status_check

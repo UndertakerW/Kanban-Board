@@ -2,7 +2,7 @@ from django import forms
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from kanban.models import Profile, Task
+from kanban.models import Profile, Task, Workspace
 
 
 class LoginForm(forms.Form):
@@ -86,4 +86,14 @@ class RegisterForm(forms.Form):
 
         # We must return the cleaned data we got from our parent.
         return cleaned_data
+
+class NewWorkspaceForm(forms.ModelForm):
+    class Meta:
+        model = Workspace
+        fields = ['name', 'participants', 'color_scheme']
+        widgets = {
+            'name': forms.TextInput(attrs={'id': 'id_name_input_text'}),
+            # TODO: User can specify zero or more participants by email
+            # TODO: User can select a color scheme
+        }
 

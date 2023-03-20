@@ -16,21 +16,21 @@ class Profile(models.Model):
 # Model name:               Workspace
 # Usage:                    The workspace information stores here, it contains a creation user
 #                           and many participant.
-# workspacename:            The identification of the workspace
-# user:                     The user who created the workspace
-# participating:            The participating relationship indicates which users are participant
+# name:                     The identification of the workspace
+# creator:                  The user who created the workspace
+# participants:             The participating relationship indicates which users are participant
 #                           of this workspace. A workspace can have multiple participant, while a
 #                           user can also join different workspaces. Thus, the relationship is a
 #                           many-to-many.
-# colorscheme:              The color scheme chosen for this workspace. It is an integer, the user
+# color_scheme:             The color scheme chosen for this workspace. It is an integer, the user
 #                           choose color scheme from a bar in the frontend. All the color scheme are
 #                           defined by backend. Users can only choose between them.
 
 class Workspace(models.Model):
-    worspacename = models.CharField(max_length=50)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    participating = models.ManyToManyField(User, related_name="participant")
-    colorscheme = models.IntegerField()
+    name = models.CharField(max_length=50)
+    creator = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    participants = models.ManyToManyField(User, related_name="participant")
+    color_scheme = models.IntegerField()
 
 
 # Model name:               Task
