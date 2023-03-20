@@ -23,6 +23,14 @@ def compute_context(request):
     context['full_name'] = fullname
     return context
 
+@login_required
+@_status_check
+def compute_edit_workspace_context(request, context, workspace):
+    context['workspace'] = workspace
+    form = NewWorkspaceForm()
+    form.initial['name'] = workspace.name
+    context['form'] = form
+
 # Function name:    _status_check
 # Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
 # Parameter:        An action function
@@ -165,11 +173,34 @@ def create_workspace_action(request):
     context['new_post_form'] = NewWorkspaceForm()
     return render(request, 'kanban/home.html', context)
 
+# Function name:    edit_workspace_action
+# url:              /workspace/:id/edit
+# Usage:            Deal with the edit workspace action.
+# Parameter:        The http request.
+# Return:           render() or redirect()
 @login_required
 @_status_check
-def edit_workspace_name_action(request):
-    context = {}
-    render(request, "kanban/workspace.html", context)
+def edit_workspace_action(request, workspace_id):
+
+    context = compute_context(request)
+
+    workspace = get_object_or_404(Workspace, id=workspace_id)
+
+    # Just display the workspace form if this is a GET request.
+    if request.method == 'GET':
+        compute_edit_workspace_context(request, context, workspace)
+        return render(request, 'kanban/edit_workspace.html', context)
+    
+    if request.method == 'POST':
+        form = NewWorkspaceForm(request.POST, request.FILES, instance=workspace)
+        if not form.is_valid():
+            context['form'] = form
+            return render(request, 'kanban/edit_workspace.html', context)
+        else:
+            form.save()
+            context['message'] = 'Workspace #{0} updated.'.format(workspace.id)
+            compute_edit_workspace_context(request, context, workspace)
+            return render(request, 'kanban/workspace.html', context)
 
 @login_required
 @_status_check
