@@ -37,11 +37,12 @@ class LoginForm(forms.Form):
 
 class RegisterForm(forms.Form):
 
-    username = forms.CharField(max_length=20, widget=forms.TextInput(
-        attrs={
-            'id': 'id_username',
-        }
-    ))
+    username = forms.CharField(max_length=20,
+                               widget=forms.TextInput(
+                                   attrs={
+                                       'id': 'id_username',
+                                   }
+                               ))
     password1 = forms.CharField(max_length=200,
                                 label='Password',
                                 widget=forms.PasswordInput(
@@ -59,16 +60,18 @@ class RegisterForm(forms.Form):
                                 attrs={
                                     'id': 'id_email',
                                 }))
-    first_name = forms.CharField(max_length=20, widget=forms.TextInput(
-        attrs={
-            'id': 'id_first_name',
-        }
-    ))
-    last_name = forms.CharField(max_length=20, widget=forms.TextInput(
-        attrs={
-            'id': 'id_last_name',
-        }
-    ))
+    first_name = forms.CharField(max_length=20,
+                                 widget=forms.TextInput(
+                                     attrs={
+                                         'id': 'id_first_name',
+                                     }
+                                 ))
+    last_name = forms.CharField(max_length=20,
+                                widget=forms.TextInput(
+                                    attrs={
+                                        'id': 'id_last_name',
+                                    }
+                                ))
 
     # Customizes form validation for properties that apply to more
     # than one field.  Overrides the forms.Form.clean function.
@@ -90,10 +93,10 @@ class RegisterForm(forms.Form):
 
 class NewWorkspaceForm(forms.ModelForm):
     participants = forms.ModelMultipleChoiceField(
-        queryset = User.objects.all(),
-        widget = forms.CheckboxSelectMultiple(
-            attrs = {'class': 'participants-checkbox'}),
-        required = False,
+        queryset=User.objects.all(),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={'class': 'participants-checkbox'}),
+        required=False,
     )
 
     color_scheme_choices = [
@@ -102,8 +105,8 @@ class NewWorkspaceForm(forms.ModelForm):
         # Add more color schemes if needed
     ]
     color_scheme = forms.ChoiceField(
-        choices = color_scheme_choices,
-        widget = forms.Select(attrs={'class': 'color-scheme-select'}),
+        choices=color_scheme_choices,
+        widget=forms.Select(attrs={'class': 'color-scheme-select'}),
     )
 
     class Meta:
