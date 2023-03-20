@@ -7,15 +7,15 @@ from kanban.models import Profile, Task, Workspace
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=20, widget=forms.TextInput(
-            attrs={
-                'id': 'id_username',
-            }
-        ))
+        attrs={
+            'id': 'id_username',
+        }
+    ))
     password = forms.CharField(max_length=200, widget=forms.PasswordInput(
-            attrs={
-                    'id': 'id_password',
-                }
-        ))
+        attrs={
+            'id': 'id_password',
+        }
+    ))
 
     # Customizes form validation for properties that apply to more
     # than one field.  Overrides the forms.Form.clean function.
@@ -37,42 +37,42 @@ class LoginForm(forms.Form):
 
 class RegisterForm(forms.Form):
 
-    username   = forms.CharField(max_length=20, widget=forms.TextInput(
-            attrs={
-                'id': 'id_username',
-            }
-        ))
-    password1  = forms.CharField(max_length=200,
-                                 label='Password', 
-                                 widget=forms.PasswordInput(
-            attrs={
-                    'id': 'id_password',
-            }))
-    password2  = forms.CharField(max_length=200,
-                                 label='Confirm password',  
-                                 widget=forms.PasswordInput(
-            attrs={
-                    'id': 'id_confirm_password',
-            }))
-    email      = forms.CharField(max_length=50,
-                                 widget = forms.EmailInput(
-            attrs={
-                    'id': 'id_email',
-            }))
+    username = forms.CharField(max_length=20, widget=forms.TextInput(
+        attrs={
+            'id': 'id_username',
+        }
+    ))
+    password1 = forms.CharField(max_length=200,
+                                label='Password',
+                                widget=forms.PasswordInput(
+                                    attrs={
+                                        'id': 'id_password',
+                                    }))
+    password2 = forms.CharField(max_length=200,
+                                label='Confirm password',
+                                widget=forms.PasswordInput(
+                                    attrs={
+                                        'id': 'id_confirm_password',
+                                    }))
+    email = forms.CharField(max_length=50,
+                            widget=forms.EmailInput(
+                                attrs={
+                                    'id': 'id_email',
+                                }))
     first_name = forms.CharField(max_length=20, widget=forms.TextInput(
-            attrs={
-                'id': 'id_first_name',
-            }
-        ))
-    last_name  = forms.CharField(max_length=20, widget=forms.TextInput(
-            attrs={
-                'id': 'id_last_name',
-            }
-        ))
-    
+        attrs={
+            'id': 'id_first_name',
+        }
+    ))
+    last_name = forms.CharField(max_length=20, widget=forms.TextInput(
+        attrs={
+            'id': 'id_last_name',
+        }
+    ))
 
     # Customizes form validation for properties that apply to more
     # than one field.  Overrides the forms.Form.clean function.
+
     def clean(self):
         # Calls our parent (forms.Form) .clean function, gets a dictionary
         # of cleaned data as a result
@@ -87,13 +87,28 @@ class RegisterForm(forms.Form):
         # We must return the cleaned data we got from our parent.
         return cleaned_data
 
+
 class NewWorkspaceForm(forms.ModelForm):
+    participants = forms.ModelMultipleChoiceField(
+        queryset = User.objects.all(),
+        widget = forms.CheckboxSelectMultiple(
+            attrs = {'class': 'participants-checkbox'}),
+        required = False,
+    )
+
+    color_scheme_choices = [
+        ('Light'),
+        ('Dark'),
+        # Add more color schemes if needed
+    ]
+    color_scheme = forms.ChoiceField(
+        choices = color_scheme_choices,
+        widget = forms.Select(attrs={'class': 'color-scheme-select'}),
+    )
+
     class Meta:
         model = Workspace
         fields = ['name', 'participants', 'color_scheme']
         widgets = {
             'name': forms.TextInput(attrs={'id': 'id_name_input_text'}),
-            # TODO: User can specify zero or more participants by email
-            # TODO: User can select a color scheme
         }
-
