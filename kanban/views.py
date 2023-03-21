@@ -7,6 +7,18 @@ from django.contrib.auth import authenticate, login, logout
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm
 from kanban.models import Profile, Workspace, Task
 
+# Function name:    _status_check
+# Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
+# Parameter:        An action function
+# Return:           A wrapped function
+def _status_check(action_function):
+    def my_wrapper_function(request, *args, **kwargs):
+        profile = Profile.objects.get(user=request.user)
+        if not profile.authentication_status:
+            return render(request, 'kanban/2fa.html')
+        return action_function(request, *args, **kwargs)
+    return my_wrapper_function
+
 # Function name:    compute_context
 # Usage:            Compute the HTTP context
 # Parameter:        The http request.
@@ -30,18 +42,6 @@ def compute_edit_workspace_context(request, context, workspace):
     form = NewWorkspaceForm()
     form.initial['name'] = workspace.name
     context['form'] = form
-
-# Function name:    _status_check
-# Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
-# Parameter:        An action function
-# Return:           A wrapped function
-def _status_check(action_function):
-    def my_wrapper_function(request, *args, **kwargs):
-        profile = Profile.objects.get(user=request.user)
-        if not profile.authentication_status:
-            return render(request, 'kanban/2fa.html')
-        return action_function(request, *args, **kwargs)
-    return my_wrapper_function
 
 # Naming regulation: For better understanding, the actions should all name
 # in: {name}_action
@@ -190,12 +190,12 @@ def create_workspace_action(request):
 def edit_workspace_action(request, workspace_id):
 
     context = compute_context(request)
+    compute_edit_workspace_context(request, context, workspace)
 
     workspace = get_object_or_404(Workspace, id=workspace_id)
 
     # Just display the workspace form if this is a GET request.
     if request.method == 'GET':
-        compute_edit_workspace_context(request, context, workspace)
         return render(request, 'kanban/edit_workspace.html', context)
     
     if request.method == 'POST':
@@ -206,7 +206,6 @@ def edit_workspace_action(request, workspace_id):
         else:
             form.save()
             context['message'] = 'Workspace #{0} updated.'.format(workspace.id)
-            compute_edit_workspace_context(request, context, workspace)
             return render(request, 'kanban/workspace.html', context)
 
 @login_required
