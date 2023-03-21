@@ -3,6 +3,14 @@
 *.pyc
 local_settings.py
 config.ini
+*.pyc
+db.sqlite3
+migrations
+.DS_Store
+venv
+my_env
+.idea
+
 
 # Editor backup files
 *~
