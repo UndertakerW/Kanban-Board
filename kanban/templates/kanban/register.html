@@ -2,16 +2,14 @@
 {% load static %}
 
 {% block user-info %}
-    <div>
-        <a href="{% url 'login' %}" id="id_login_link">Login</a>
-        <a href="{% url 'logout' %}" id="id_logout_link">Logout</a>
-    </div>
+    <a href="{% url 'login' %}" id="id_login_link" class="text-success" >Login</a>
+    <a href="{% url 'logout' %}" id="id_logout_link" class=text-muted" >Logout</a>
 {% endblock %}
 
 
 {% block content %}
-    <div id="id_page_name">Register</div>
-    <form method="post" action="{% url 'register' %}">
+    <div id="id_page_name" class="d-flex justify-content-center">Register</div>
+    <form method="post" action="{% url 'register' %}" >
         <table>
             {% for field in form.visible_fields %}
                 <tr>

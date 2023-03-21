@@ -41,6 +41,7 @@ class RegisterForm(forms.Form):
                                widget=forms.TextInput(
                                    attrs={
                                        'id': 'id_username',
+                                       'class': "form-control",
                                    }
                                ))
     password1 = forms.CharField(max_length=200,
@@ -48,28 +49,33 @@ class RegisterForm(forms.Form):
                                 widget=forms.PasswordInput(
                                     attrs={
                                         'id': 'id_password',
+                                        'class': "form-control",
                                     }))
     password2 = forms.CharField(max_length=200,
                                 label='Confirm password',
                                 widget=forms.PasswordInput(
                                     attrs={
                                         'id': 'id_confirm_password',
+                                        'class': "form-control",
                                     }))
     email = forms.CharField(max_length=50,
                             widget=forms.EmailInput(
                                 attrs={
                                     'id': 'id_email',
+                                    'class': "form-control",
                                 }))
     first_name = forms.CharField(max_length=20,
                                  widget=forms.TextInput(
                                      attrs={
                                          'id': 'id_first_name',
+                                         'class': "form-control",
                                      }
                                  ))
     last_name = forms.CharField(max_length=20,
                                 widget=forms.TextInput(
                                     attrs={
                                         'id': 'id_last_name',
+                                        'class': "form-control",
                                     }
                                 ))
 
