@@ -159,7 +159,9 @@ def home_action(request):
 @_status_check
 def create_workspace_action(request):
     if request.method == 'GET':
-        return home_action(request)
+        context = compute_context(request)
+        context['form'] = NewWorkspaceForm()
+        return render(request, 'kanban/create_workspace.html', context)
 
     workspace = Workspace()
 
