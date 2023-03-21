@@ -1,1 +1,35 @@
-{% comment %}This is the page showing the registration form{% endcomment %}
+{% extends "kanban/base.html" %}
+{% load static %}
+
+{% block user-info %}
+    <div>
+        <a href="{% url 'login' %}" id="id_login_link">Login</a>
+        <a href="{% url 'logout' %}" id="id_logout_link">Logout</a>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div id="id_page_name">Register</div>
+    <form method="post" action="{% url 'register' %}">
+        <table>
+            {% for field in form.visible_fields %}
+                <tr>
+                    <td>{{field.label_tag}}</td>
+                    <td>{{field}}</td>
+                    <td class="error">
+                        {% for error in field.errors %} {{error}} {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% csrf_token %}
+        <button id="id_register_button" type="submit">Submit</button>
+    </form>
+
+    {% for error in form.non_field_errors %}
+        <p class="errorlist">
+            {{ error }}
+        </p>
+    {% endfor %}
+{% endblock %}

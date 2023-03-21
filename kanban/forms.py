@@ -119,30 +119,31 @@ class NewWorkspaceForm(forms.ModelForm):
 
 class TaskForm(forms.ModelForm):
     class Meta:
-        model = Task
-        fields = '__all__'
-
-        STATUS_CHOICES = (
-            (1, 'To do'),
-            (2, 'In progress'),
-            (3, 'Done'),
-        )
-
-        PRIORITY_CHOICES = (
-            (1, 'High'),
-            (2, 'Medium'),
-            (3, 'Low'),
-        )
-
-        widgets = {
-            'taskname': forms.TextInput(attrs={'id': 'id_taskname_input_text'}),
-            'description': forms.TextInput(attrs={'id': 'id_description_input_text'}),
-            'assignee': forms.ModelChoiceField(queryset=User.objects.all(), attrs={'id': 'id_assignee_input_select'}),
-            'creation_date': forms.DateField(attrs={'id': 'id_creation_date_input_date'}),
-            'due_date': forms.DateField(attrs={'id': 'id_due_date_input_date'}),
-            'status': forms.Select(choices=STATUS_CHOICES, attrs={'id': 'id_status_input_select'}),
-            'priority': forms.Select(choices=PRIORITY_CHOICES, attrs={'id': 'id_priority_input_select'}),
-        }
+        a=1
+    #     model = Task
+    #     fields = '__all__'
+    #
+    #     STATUS_CHOICES = (
+    #         (1, 'To do'),
+    #         (2, 'In progress'),
+    #         (3, 'Done'),
+    #     )
+    #
+    #     PRIORITY_CHOICES = (
+    #         (1, 'High'),
+    #         (2, 'Medium'),
+    #         (3, 'Low'),
+    #     )
+    #
+    #     widgets = {
+    #         'taskname': forms.TextInput(attrs={'id': 'id_taskname_input_text'}),
+    #         'description': forms.TextInput(attrs={'id': 'id_description_input_text'}),
+    #         'assignee': forms.ModelChoiceField(queryset=User.objects.all(), attrs={'id': 'id_assignee_input_select'}),
+    #         'creation_date': forms.DateField(attrs={'id': 'id_creation_date_input_date'}),
+    #         'due_date': forms.DateField(attrs={'id': 'id_due_date_input_date'}),
+    #         'status': forms.Select(choices=STATUS_CHOICES, attrs={'id': 'id_status_input_select'}),
+    #         'priority': forms.Select(choices=PRIORITY_CHOICES, attrs={'id': 'id_priority_input_select'}),
+    #     }
 
 class ProfileForm(forms.ModelForm):
     class Meta:

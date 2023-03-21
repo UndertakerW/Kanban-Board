@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm
 from kanban.models import Profile, Workspace, Task
 
+
 # Function name:    _status_check
 # Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
 # Parameter:        An action function
@@ -17,7 +18,9 @@ def _status_check(action_function):
         if not profile.authentication_status:
             return render(request, 'kanban/2fa.html')
         return action_function(request, *args, **kwargs)
+
     return my_wrapper_function
+
 
 # Function name:    compute_context
 # Usage:            Compute the HTTP context
@@ -35,6 +38,7 @@ def compute_context(request):
     context['full_name'] = fullname
     return context
 
+
 @login_required
 @_status_check
 def compute_edit_workspace_context(request, context, workspace):
@@ -42,6 +46,7 @@ def compute_edit_workspace_context(request, context, workspace):
     form = NewWorkspaceForm()
     form.initial['name'] = workspace.name
     context['form'] = form
+
 
 # Naming regulation: For better understanding, the actions should all name
 # in: {name}_action
@@ -94,10 +99,12 @@ def login_action(request):
     login(request, new_user)
     return redirect(reverse('home'))
 
+
 @login_required
 def logout_action(request):
     context = {}
     render(request, "kanban/login.html", context)
+
 
 # Function name:    register_action
 # url:              /register
@@ -139,6 +146,7 @@ def register_action(request):
     login(request, new_user)
     return redirect(reverse('home'))
 
+
 # Function name:    home_action
 # url:              /
 # Usage:            Deal with the home action.
@@ -148,7 +156,8 @@ def register_action(request):
 @_status_check
 def home_action(request):
     return
-    #TODO
+    # TODO
+
 
 # Function name:    create_workspace_action
 # url:              /workspace/create
@@ -176,11 +185,12 @@ def create_workspace_action(request):
     new_workspace_form.save()
 
     message = 'Workspace created'
-    
+
     context = compute_context(request)
     context['message'] = message
     context['new_post_form'] = NewWorkspaceForm()
     return render(request, 'kanban/home.html', context)
+
 
 # Function name:    edit_workspace_action
 # url:              /workspace/:id/edit
@@ -190,7 +200,6 @@ def create_workspace_action(request):
 @login_required
 @_status_check
 def edit_workspace_action(request, workspace_id):
-
     context = compute_context(request)
     compute_edit_workspace_context(request, context, workspace)
 
@@ -199,7 +208,7 @@ def edit_workspace_action(request, workspace_id):
     # Just display the workspace form if this is a GET request.
     if request.method == 'GET':
         return render(request, 'kanban/edit_workspace.html', context)
-    
+
     if request.method == 'POST':
         form = NewWorkspaceForm(request.POST, request.FILES, instance=workspace)
         if not form.is_valid():
@@ -209,6 +218,7 @@ def edit_workspace_action(request, workspace_id):
             form.save()
             context['message'] = 'Workspace #{0} updated.'.format(workspace.id)
             return render(request, 'kanban/workspace.html', context)
+
 
 @login_required
 @_status_check
@@ -234,6 +244,7 @@ def create_task_action(request):
 
     render(request, "kanban/task.html", context)
 
+
 @login_required
 @_status_check
 def edit_task_action(request, task_id):
@@ -251,6 +262,7 @@ def edit_task_action(request, task_id):
     context["task_form"] = task_form
 
     render(request, "kanban/task.html", context)
+
 
 @login_required
 @_status_check
@@ -271,4 +283,3 @@ def edit_user_profile(request):
     context["profile_form"] = profile
 
     render(request, "kanban/profile.html", context)
-
