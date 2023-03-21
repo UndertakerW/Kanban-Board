@@ -4,8 +4,8 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
-from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm
-from kanban.models import Profile, Workspace
+from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm
+from kanban.models import Profile, Workspace, Task
 
 # Function name:    compute_context
 # Usage:            Compute the HTTP context
@@ -55,7 +55,14 @@ def _status_check(action_function):
 @login_required
 @_status_check
 def home_action(request):
-    context = {}
+    context = compute_context(request)
+    user = request.user
+
+    profile = get_object_or_404(Profile, user=user)
+    workspaces = Workspace.objects.filter(participants=user)
+
+    context["profile_form"] = profile
+    context["workspaces"] = workspaces
     render(request, "kanban/profile.html", context)
 
 
@@ -205,18 +212,62 @@ def edit_workspace_action(request, workspace_id):
 @login_required
 @_status_check
 def create_task_action(request):
-    context = {}
+    context = compute_context(request)
+
+    if request.method == "GET":
+        context["form"] = TaskForm(initial={
+            "taskname": "",
+            "description": "",
+            "assignee": "",
+            "creation_date": "",
+            "due_date": "",
+            "status": "",
+            "priority": "",
+        })
+        render(request, "kanban/task.html", context)
+
+    task_form = TaskForm(request.POST)
+    # TODO: check validation of the form and give error message
+    task_form.save()
+    context["form"] = task_form
+
     render(request, "kanban/task.html", context)
 
 @login_required
 @_status_check
-def edit_task_action(request):
-    context = {}
+def edit_task_action(request, task_id):
+    context = compute_context(request)
+
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == "GET":
+        form = TaskForm(instance=task)
+        context["task_form"] = form
+        return render(request, "kanban/task.html", context)
+
+    task_form = TaskForm(request.POST, instance=task)
+    # TODO: check validation of the form and give error message
+    task_form.save()
+    context["task_form"] = task_form
+
     render(request, "kanban/task.html", context)
 
 @login_required
 @_status_check
 def edit_user_profile(request):
-    context = {}
+    context = compute_context(request)
+    user = request.user
+
+    profile = get_object_or_404(Profile, user=user)
+    workspaces = Workspace.objects.filter(participants=user)
+
+    if request.method == "GET":
+        context["profile_form"] = profile
+        context["workspaces"] = workspaces
+        render(request, "kanban/profile.html", context)
+
+    profile_form = ProfileForm(request.POST)
+    profile_form.save()
+    context["profile_form"] = profile
+
     render(request, "kanban/profile.html", context)
 

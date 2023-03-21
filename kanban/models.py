@@ -11,6 +11,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="profile_user")
     register_type = models.CharField(max_length=20)
     authentication_status = models.BooleanField(default=False)
+    profile_description = models.TextField(max_length=50, null=True)
 
 
 # Model name:               Workspace
@@ -57,5 +58,6 @@ class Task(models.Model):
     creation_date = models.DateField()
     due_date = models.DateField()
     status = models.IntegerField()
-    sprint = models.IntegerField()
+    # Delete sprint temporarily since we didn't plan a method to create sprints
+    # sprint = models.IntegerField()
     priority = models.IntegerField()
