@@ -1,0 +1,17 @@
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 30vh auto 0;
+    width: 300px;
+    justify-content: center;
+    text-align: center;
+}
+
+.login-icon-google {
+    height: 30px;
+    margin-right: 10px;
+}
+
+.button-large-main-purple {
+    margin-top: 10px;
+}
