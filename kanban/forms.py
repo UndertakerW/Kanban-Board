@@ -100,8 +100,8 @@ class NewWorkspaceForm(forms.ModelForm):
     )
 
     color_scheme_choices = [
-        ('light', 'Light'),
-        ('dark', 'Dark')
+        (1, 'Light'),
+        (2, 'Dark')
         # Add more color schemes if needed
     ]
     color_scheme = forms.ChoiceField(
