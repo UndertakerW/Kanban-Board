@@ -1,41 +1,110 @@
-{% extends "kanban/base.html" %}
-{% load static %}
-
-{% block user-info %}
-    <div class="user_info_class">
-    <div id = "id_user_name">
-        <a id = "id_nav_profile">{{ full_name }} </a>
-    </div>
-    <br>
-    <div id = id_links>
-        <a id = "id_nav_logout" href="{% url 'logout' %}">Logout</a>
-    </div>
-    </div>
-{% endblock %}
-
 {% block content %}
-    <form action="{% url 'edit-user-profile' %}" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-        <div id = "id_profile_description">
-            Profile description:
-            {{ profile_form.profile_description }}
+
+    <!-- Workspace Creation Modal -->
+    <div class="modal fade" id="workspace-creation-modal" tabindex="-1" aria-labelledby="workspace-creation-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="workspace-creation-modal-label">Create New Board</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/workspace/{{ selected_workspace.id }}/create">
+                    <table>
+                        {{ form }}
+                    </table>
+                    {% csrf_token %}
+                    <button type="submit" id="id_edit_workspace_button">Submit</button>
+                </form>
+            </div>
+          </div>
         </div>
-    </form>
-
-    <!-- make this a modal -->
-    <a>
-        <button id = "id_create_workspace_button" type = "submit" name = "id_create_workspace_button">Create Workspace</button>
-    </a>
-
-    <div>Workspaces list: {{ workspaces }}</div>
-    <ul>
-        {% for ws in workspaces %}
-            <li>
-                <a href="/workspace/{{ws.id}}">
-                    {{ ws.name }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+      </div>
 {% endblock %}
 
+{% comment %}This is the page showing the profile{% endcomment %}
+<!doctype html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    {% load static %}
+		<link href="{% static 'kanban/base.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'kanban/profile.css' %}" rel="stylesheet" type="text/css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+        {% load crispy_forms_tags %}
+        <!-- bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <!-- font -->
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+        <title> {% block title %} Kanban Project Management System {% endblock %} </title>
+	</head>
+    <body>
+        <div class="profile-header-wrapper">
+            <div class="header-logo">
+                <img src="{% static 'kanban/imgs/logo-dark.svg' %}">
+            </div>
+            <div class="profile-header-content">
+                <div class="profile-header-options">
+                    <span class="sub-text-m"> {{ full_name }} </span> 
+                    <ul class="dropdown-menu customized-dropdown">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="profile-content-wrapper">
+            <div class="profile-content">
+                <h1 class="heading-xxl"> Profile of {{full_name}} </h2>
+                <form class="profile-form" action="{% url 'edit-user-profile' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label class="heading-l" for="id_profile_description">
+                        Profile description:
+                    </label>
+                    <textarea disabled id="id_profile_description">
+                        {{ profile_form.profile_description }}
+                    </textarea>
+                </form>
+                
+                <button 
+                    type="button" data-bs-toggle="modal" data-bs-target="#workspace-creation-modal"
+                    class="add-task-btn button-large-main-purple">
+                    + Create new board
+                </button>
+                
+                <span class="profile-workspaces-title heading-l">Workspaces:</span>
+                <ul>
+                    {% for ws in workspaces %}
+                        <li>
+                            <a href="/workspace/{{ws.id}}" class="link-m">
+                                {{ ws.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Workspace Creation Modal -->
+        <div class="modal fade" id="workspace-creation-modal" tabindex="-1" aria-labelledby="workspace-creation-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="workspace-creation-modal-label">Create New Board</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="/workspace/{{ selected_workspace.id }}/create">
+                        {% csrf_token %}
+                        {{ form }}
+                        <button class="button-large-main-purple" type="submit" id="id_edit_workspace_button">Submit</button>
+                    </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- boostrap -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    </body>
+</html>

@@ -94,6 +94,7 @@ def home_action(request):
 
     context['profile_form'] = profile
     context['workspaces'] = workspaces
+    context['form'] = NewWorkspaceForm()
     return render(request, 'kanban/profile.html', context)
 
 
@@ -196,7 +197,8 @@ def create_workspace_action(request, selected_workspace_id):
             'workspaces': workspaces,
             'form': NewWorkspaceForm(),
             'message': '',
-            'selected_workspace': selected_workspace
+            'selected_workspace': selected_workspace,
+            'task_form': TaskForm(),
         }
     if request.method == 'GET':
         workspaces = Workspace.objects.filter(participants=request.user)
@@ -210,11 +212,13 @@ def create_workspace_action(request, selected_workspace_id):
 
     if not new_workspace_form.is_valid():
         context['form'] = new_workspace_form
+        context['task_form'] = TaskForm()
         return render(request, 'kanban/workspace.html', context)
 
     new_workspace_form.save()
     context['message'] = 'The board \'{}\' is created Successfully! :)'.format(new_workspace_form.cleaned_data['name'])
     context['selected_workspace'] = new_workspace_form.name
+    context['task_form'] = TaskForm()
     return render(request, 'kanban/workspace.html', context)
 
 # Function name:    workspace_action
@@ -234,7 +238,8 @@ def workspace_action(request, selected_workspace_id):
             'workspaces': workspaces,
             'form': NewWorkspaceForm(),
             'message': '',
-            'selected_workspace': selected_workspace
+            'selected_workspace': selected_workspace,
+            'task_form': TaskForm(),
         }
 
         return render(request, 'kanban/workspace.html', context)
@@ -269,11 +274,16 @@ def edit_workspace_action(request, workspace_id):
 
 @login_required
 @_status_check
-def create_task_action(request, selected_workspace_id, task_id):
-    context = compute_context(request)
-
-    if request.method == 'GET':
-        context['form'] = TaskForm(initial={
+def create_task_action(request, selected_workspace_id):
+    workspaces = Workspace.objects.filter(participants=request.user)
+    selected_workspace = get_object_or_404(Workspace, id=selected_workspace_id)
+    context = {
+        'username': request.user.first_name + ' ' + request.user.last_name,
+        'workspaces': workspaces,
+        'form': NewWorkspaceForm(),
+        'message': '',
+        'selected_workspace': selected_workspace,
+        'task_form': TaskForm(initial={
             'taskname': '',
             'description': '',
             'assignee': '',
@@ -281,7 +291,10 @@ def create_task_action(request, selected_workspace_id, task_id):
             'due_date': '',
             'status': '',
             'priority': '',
-        })
+        }),
+    }
+
+    if request.method == 'GET':
         return render(request, 'kanban/workspace.html', context)
 
     task_form = TaskForm(request.POST)
@@ -323,10 +336,12 @@ def edit_user_profile(request):
     if request.method == 'GET':
         context['profile_form'] = profile
         context['workspaces'] = workspaces
+        context['form'] = NewWorkspaceForm()
         return render(request, 'kanban/profile.html', context)
 
     profile_form = ProfileForm(request.POST)
     profile_form.save()
     context['profile_form'] = profile
+    context['form'] = NewWorkspaceForm()
 
     return render(request, 'kanban/profile.html', context)

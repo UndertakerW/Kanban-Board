@@ -117,13 +117,10 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Content goes here
-                    <form method="post" action="/workspace/{{ selected_workspace.id }}/create">
-                        <table>
-                            {{ form }}
-                        </table>
+                    <form method="post" class="modal-workspace-creation-form" action="/workspace/{{ selected_workspace.id }}/create/">
+                        {{ form }}
                         {% csrf_token %}
-                        <button type="submit" id="id_edit_workspace_button">Submit</button>
+                        <button type="submit" class="button-large-main-purple modal-button">Submit</button>
                     </form>
                 </div>
               </div>
@@ -139,9 +136,11 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Content goes here
-                    <!-- TODO need some backend support and create a form to this -->
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form method="post" class="modal-task-creation-form" action="/workspace/{{ selected_workspace.id }}/task/create/">
+                        {{ task_form }}
+                        {% csrf_token %}
+                        <button type="submit" class="button-large-main-purple modal-button">Submit</button>
+                    </form>
                 </div>
               </div>
             </div>

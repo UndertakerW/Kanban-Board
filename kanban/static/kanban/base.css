@@ -49,6 +49,16 @@ button:hover {
 }
 
 /* preset heading stylings */
+.heading-xxl {
+    font-family: Plus Jakarta Sans;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 30px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: var(--main-black)
+}
+
 .heading-xl {
     font-family: Plus Jakarta Sans;
     font-size: 24px;
@@ -133,4 +143,14 @@ button:hover {
 
 .link-no-underline {
     text-decoration: none;
+}
+
+.link-m {
+    font-family: Plus Jakarta Sans;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 19px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: var(--main-purple);
 }

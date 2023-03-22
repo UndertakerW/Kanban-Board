@@ -1,0 +1,56 @@
+.profile-header-wrapper {
+    height: 97px;
+    width: 100vw;
+    background-color: white;
+    display: flex;
+}
+
+.header-logo {
+    padding: 32.78px 0px 37px 34px;
+    width: 300px;
+}
+
+.profile-header-content {
+    padding: 29px 32.38px 37px 24px;
+    width: calc(100vw - 300px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-header-options {
+    min-width: calc(100vw - 350px);
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+/* the profile content area */
+.profile-content-wrapper {
+    width: 100vw;
+    height: calc(100vh - 98px);
+    background-color:  var(--cold-white);
+
+    overflow: scroll;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.profile-content {
+    margin: 50px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 50vw;
+}
+
+.profile-form{
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-workspaces-title {
+    margin: 20px 0 10px;
+}

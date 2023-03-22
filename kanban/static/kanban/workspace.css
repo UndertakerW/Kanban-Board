@@ -142,3 +142,20 @@
 .task-title {
     margin: 20px;
 }
+
+/* modal */
+.modal-task-creation-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-workspace-creation-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-button {
+    margin-top: 10px;
+}
