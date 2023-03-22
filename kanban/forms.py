@@ -157,7 +157,7 @@ class TaskForm(forms.ModelForm):
         widgets = {
             'taskname': forms.TextInput(attrs={'id': 'id_taskname_input_text'}),
             'description': forms.TextInput(attrs={'id': 'id_description_input_text'}),
-            'assignee': forms.Select(attrs={'id': 'id_assignee_input_select'}, choices=User.objects.all()),
+            #'assignee': forms.Select(attrs={'id': 'id_assignee_input_select'}, choices=User.objects.filter(is_active=True)),
             'creation_date': forms.DateInput(attrs={'id': 'id_creation_date_input_date'}),
             'due_date': forms.DateInput(attrs={'id': 'id_due_date_input_date'}),
             'status': forms.Select(choices=STATUS_CHOICES, attrs={'id': 'id_status_input_select'}),

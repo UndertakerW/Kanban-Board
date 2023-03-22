@@ -57,7 +57,7 @@ class Task(models.Model):
     id = models.AutoField(primary_key=True)
     taskname = models.TextField(max_length=50)
     description = models.TextField(max_length=500)
-    assignee = models.ForeignKey(User, default=None, on_delete=models.PROTECT, to_field='id')
+    #assignee = models.ForeignKey(User, default=None, on_delete=models.PROTECT, to_field='id')
     creation_date = models.DateField()
     due_date = models.DateField()
     status = models.IntegerField()
