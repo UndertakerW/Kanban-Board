@@ -10,12 +10,16 @@ from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, Pr
 from kanban.models import Profile, Workspace, Task
 
 
-# Function name:    _status_check
+# Function name:    _status_checkobjects.
 # Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
 # Parameter:        An action function
 # Return:           A wrapped function
 def _status_check(action_function):
     def my_wrapper_function(request, *args, **kwargs):
+        print("====== user is: ")
+        print(Profile.objects.all()[0].user)
+        print(request.user)
+        
         profile = Profile.objects.get(user=request.user)
         if not profile.authentication_status:
             return render(request, 'kanban/otp.html')
@@ -124,8 +128,7 @@ def login_action(request):
 
 @login_required
 def logout_action(request):
-    context = {}
-    return render(request, "kanban/login.html", context)
+    return redirect(reverse('login'))
 
 
 # Function name:    register_action
@@ -199,7 +202,7 @@ def create_workspace_action(request):
 
     if not new_workspace_form.is_valid():
         context = compute_context(request)
-        return render(request, 'kanban/profile.html', context)
+        return render(request, 'kanban/workspace.html', context)
 
     new_workspace_form.save()
 
@@ -209,6 +212,22 @@ def create_workspace_action(request):
     context['message'] = message
     context['new_post_form'] = NewWorkspaceForm()
     return render(request, 'kanban/profile.html', context)
+
+# Function name:    workspace_action
+# url:              /workspace
+# Usage:            Render workspace screen on visit
+# Parameter:        The http request.
+# Return:           render()
+@login_required
+@_status_check
+def workspace_action(request):
+    # Currently its visiting workspace anyways
+    # if request.method == 'GET':
+    #     context = compute_context(request)
+    #     return render(request, 'kanban/workspace.html')
+    context = compute_context(request)
+    context["username"] = request.user.first_name + ' ' + request.user.last_name
+    return render(request, 'kanban/workspace.html', context)
 
 
 # Function name:    edit_workspace_action

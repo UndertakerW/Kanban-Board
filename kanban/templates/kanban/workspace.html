@@ -23,15 +23,18 @@
             <div class="workspace-header-content">
                 <h2 class="heading-xl"> Platform Launch</h2>
                 <div class="workspace-header-options">
-                    <a class="sub-text-m"> Farnam Jahanian </a> 
+                    <a class="sub-text-m" href="{% url 'home' %}"> {{ username }} </a> 
                     <button 
                         type="button" data-bs-toggle="modal" data-bs-target="#task-creation-modal"
                         class="add-task-btn button-large-main-purple">
                         + Add New Task
                     </button>
-                    <button class="ellipsis-btn">
+                    <button class="ellipsis-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{% static 'kanban/imgs/icon-vertical-ellipsis.svg' %}"> 
                     </button>
+                    <ul class="dropdown-menu customized-dropdown">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
                 </div>
             </div>
         </div>

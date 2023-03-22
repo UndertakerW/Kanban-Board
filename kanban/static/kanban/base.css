@@ -10,6 +10,10 @@ body {
     --shade-3-gray: #3E3F4E;
     --shade-4-gray: #828FA3;
     --cold-white: #E4EBFA; 
+    --bright-white: #F4F7FD;
+    --error-red: #EA5555;
+    --disabled-error-red: #FF9898;
+
 
     font-family: Plus Jakarta Sans !important;
     font-weight: 700;
@@ -111,4 +115,18 @@ button:hover {
     justify-content: center;
     cursor: pointer;
     padding: 15px 25px 14px 25px;
+}
+
+/* errors */
+.errorlist{
+    margin: 0;
+}
+.errorlist li{
+    font-family: Plus Jakarta Sans;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 19px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: var(--error-red);
 }

@@ -24,6 +24,7 @@ urlpatterns = [
     path('register', views.register_action, name='register'),
     path('create-workspace', views.create_workspace_action, name='create-workspace'),
     path('workspace/<int:workspace_id>/edit', views.edit_workspace_action, name='edit-workspace'),
+    path('workspace', views.workspace_action, name="workspace"),
     path('create_task', views.create_task_action, name='create-task'),
     path('edit-task/<int:task_id>', views.edit_task_action, name='edit-task'),
     path('edit-user-profile', views.edit_user_profile, name='edit-user-profile'),

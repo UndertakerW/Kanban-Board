@@ -27,5 +27,14 @@
     </a>
 
     <div>Workspaces list: {{ workspaces }}</div>
+    <ul>
+        {% for ws in workspaces %}
+            <li>
+                <a href="{% url 'workspace' %}">
+                    {{ ws.name }}
+                </a>
+            </li>    
+        {% endfor %}
+    </ul>
 {% endblock %}
 
