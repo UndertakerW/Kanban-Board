@@ -1,0 +1,29 @@
+.login-wrapper {
+    display: flex;
+    margin: 10vh 10vw 0;
+    width: 70vw;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.login-img-wrapper {
+    width: 40vw;
+    border-right: .5px solid var(--light-purple)
+}
+
+.login-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 20vw;
+    justify-content: center;
+    text-align: center;
+}
+
+.login-icon-google {
+    height: 30px;
+    margin-right: 10px;
+}
+
+.button-large-main-purple {
+    margin-top: 10px;
+}
