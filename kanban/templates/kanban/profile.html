@@ -22,7 +22,8 @@
         </div>
     </form>
 
-    <a href="{% url 'create-workspace' %}">
+    <!-- make this a modal -->
+    <a>
         <button id = "id_create_workspace_button" type = "submit" name = "id_create_workspace_button">Create Workspace</button>
     </a>
 
@@ -30,10 +31,10 @@
     <ul>
         {% for ws in workspaces %}
             <li>
-                <a href="{% url 'workspace' %}">
+                <a href="/workspace/{{ws.id}}">
                     {{ ws.name }}
                 </a>
-            </li>    
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}

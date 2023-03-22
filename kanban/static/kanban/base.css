@@ -130,3 +130,7 @@ button:hover {
     text-align: left;
     color: var(--error-red);
 }
+
+.link-no-underline {
+    text-decoration: none;
+}

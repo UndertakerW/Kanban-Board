@@ -82,6 +82,14 @@
     color: white;
 }
 
+.sidebar-board-option-inactive {
+    background-color: white;
+    color: var(--shade-4-gray);
+    border: none;
+    border-radius: 0;
+    width: 300px;
+}
+
 .sidebar-board-option-create-board {
     background-color: rgba(0,0,0,0);
     color: var(--main-purple);

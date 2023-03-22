@@ -21,7 +21,7 @@
                 <img src="{% static 'kanban/imgs/logo-dark.svg' %}">
             </div>
             <div class="workspace-header-content">
-                <h2 class="heading-xl"> Platform Launch</h2>
+                <h2 class="heading-xl">{{ selected_workspace.name }}</h2>
                 <div class="workspace-header-options">
                     <a class="sub-text-m" href="{% url 'home' %}"> {{ username }} </a> 
                     <button 
@@ -42,10 +42,25 @@
             <div class="sidebar-collapse-wrapper">
                 <div class="heading-s sidebar-heading">ALL BOARDS (1)</div>
                 <div class="sidebar-boards">
-                    <div class="sidebar-board-option sidebar-board-option-active heading-m"> 
-                        <img src="{% static 'kanban/imgs/icon-board-white.svg' %}">
-                        Platform Launch 
-                    </div>
+                    {% for ws in workspaces %}
+                        <a class="link-no-underline" href="/workspace/{{ws.id}}">
+                            {% if selected_workspace.id == ws.id%}
+                            
+                                <div class="sidebar-board-option sidebar-board-option-active heading-m"> 
+                                    <img src="{% static 'kanban/imgs/icon-board-white.svg' %}">
+                                    {{ ws.name }}
+                                </div>
+                            </a>
+                            
+                            {% else %}
+                                <div class="sidebar-board-option sidebar-board-option-inactive heading-m"> 
+                                    <img src="{% static 'kanban/imgs/icon-board.svg' %}">
+                                    {{ ws.name }}
+                                </div>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                    
                     <button type="button" data-bs-toggle="modal" data-bs-target="#workspace-creation-modal"
                         class="sidebar-board-option sidebar-board-option-create-board heading-m"> 
                         <img src="{% static 'kanban/imgs/icon-board-purple.svg' %}">
@@ -103,8 +118,13 @@
                 </div>
                 <div class="modal-body">
                     Content goes here
-                    <!-- TODO need some backend support and create a form to this -->
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <form method="post" action="/workspace/{{ selected_workspace.id }}/create">
+                        <table>
+                            {{ form }}
+                        </table>
+                        {% csrf_token %}
+                        <button type="submit" id="id_edit_workspace_button">Submit</button>
+                    </form>
                 </div>
               </div>
             </div>

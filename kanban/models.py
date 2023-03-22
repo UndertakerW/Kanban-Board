@@ -34,7 +34,7 @@ class Profile(models.Model):
 class Workspace(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    creator = models.OneToOneField(User, on_delete=models.CASCADE)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_workspaces')
     participants = models.ManyToManyField(User, related_name="participant")
     color_scheme = models.IntegerField()
 

@@ -22,11 +22,11 @@ urlpatterns = [
     path('login', views.login_action, name='login'),
     path('logout', views.logout_action, name='logout'),
     path('register', views.register_action, name='register'),
-    path('create-workspace', views.create_workspace_action, name='create-workspace'),
-    path('workspace/<int:workspace_id>/edit', views.edit_workspace_action, name='edit-workspace'),
-    path('workspace', views.workspace_action, name="workspace"),
-    path('create_task', views.create_task_action, name='create-task'),
-    path('edit-task/<int:task_id>', views.edit_task_action, name='edit-task'),
+    path('workspace/<int:selected_workspace_id>/create/', views.create_workspace_action, name='create-workspace'),
+    path('workspace/<int:selected_workspace_id>/edit/<int:workspace_id>', views.edit_workspace_action, name='edit-workspace'),
+    path('workspace/<int:selected_workspace_id>', views.workspace_action, name="workspace"),
+    path('workspace/<int:selected_workspace_id>/task/create/<int:task_id>', views.create_task_action, name='create-task'),
+    path('workspace/<int:selected_workspace_id>/task/edit/<int:task_id>', views.edit_task_action, name='edit-task'),
     path('edit-user-profile', views.edit_user_profile, name='edit-user-profile'),
     path('otp_verify', views.otp_verify, name="otp_verify")
 ]
