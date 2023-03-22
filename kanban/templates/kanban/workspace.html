@@ -1,1 +1,130 @@
 {% comment %}This is the page showing the workspace{% endcomment %}
+<!doctype html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    {% load static %}
+		<link href="{% static 'kanban/base.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'kanban/workspace.css' %}" rel="stylesheet" type="text/css">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+        {% load crispy_forms_tags %}
+        <!-- bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <!-- font -->
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+        <title> {% block title %} Kanban Project Management System {% endblock %} </title>
+	</head>
+    <body>
+        <div class="workspace-header-wrapper">
+            <div class="header-logo">
+                <img src="{% static 'kanban/imgs/logo-dark.svg' %}">
+            </div>
+            <div class="workspace-header-content">
+                <h2 class="heading-xl"> Platform Launch</h2>
+                <div class="workspace-header-options">
+                    <a class="sub-text-m"> Farnam Jahanian </a> 
+                    <button 
+                        type="button" data-bs-toggle="modal" data-bs-target="#task-creation-modal"
+                        class="add-task-btn button-large-main-purple">
+                        + Add New Task
+                    </button>
+                    <button class="ellipsis-btn">
+                        <img src="{% static 'kanban/imgs/icon-vertical-ellipsis.svg' %}"> 
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-wrapper">
+            <div class="sidebar-collapse-wrapper">
+                <div class="heading-s sidebar-heading">ALL BOARDS (1)</div>
+                <div class="sidebar-boards">
+                    <div class="sidebar-board-option sidebar-board-option-active heading-m"> 
+                        <img src="{% static 'kanban/imgs/icon-board-white.svg' %}">
+                        Platform Launch 
+                    </div>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#workspace-creation-modal"
+                        class="sidebar-board-option sidebar-board-option-create-board heading-m"> 
+                        <img src="{% static 'kanban/imgs/icon-board-purple.svg' %}">
+                        + Create New Board
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="workspace-board">
+            <div class="column-wrapper">
+                <div class="column-header heading-s">TODO</div>
+                <div class="column">
+                    <div class="task-wrapper">
+                        <h4 class="heading-m task-title"> Build UI for onboarding flow </h4>
+                    </div>
+                    <div class="task-wrapper">
+                        <h4 class="heading-m task-title"> Build UI for search </h4>
+                    </div>
+                    <div class="task-wrapper">
+                        <h4 class="heading-m task-title"> Create template structures </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="column-wrapper">
+                <div class="column-header heading-s">DOING</div>
+                <div class="column">
+                    <div class="task-wrapper">
+                        <h4 class="heading-m task-title"> Design setting and search pages </h4>
+                    </div>
+                    <div class="task-wrapper">
+                        <h4 class="heading-m task-title"> Add account management endpoints </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="column-wrapper">
+                <div class="column-header heading-s">DONE</div>
+                <div class="column">
+                    <div class="task-wrapper">
+                        <h4 class="heading-m task-title"> Create wireframe prototype </h4>
+                    </div>
+                    <div class="task-wrapper">
+                        <h4 class="heading-m task-title"> Market discovery </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workspace Creation Modal -->
+        <div class="modal fade" id="workspace-creation-modal" tabindex="-1" aria-labelledby="workspace-creation-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="workspace-creation-modal-label">Create New Board</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Content goes here
+                    <!-- TODO need some backend support and create a form to this -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- Task Creation Modal -->
+        <div class="modal fade" id="task-creation-modal" tabindex="-1" aria-labelledby="task-creation-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="task-creation-modal-label">Add New Task</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Content goes here
+                    <!-- TODO need some backend support and create a form to this -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!-- boostrap -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    </body>
+</html>

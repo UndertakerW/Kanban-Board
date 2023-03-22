@@ -1,2 +1,114 @@
 /*This is the base css file for styling. If we are using frameworks, and don't need
 this file, remember to change the href relatively in ~/template/kanban/base.html */
+body {
+    /* color palette */
+    --main-purple: #635FC7;
+    --light-purple: #ABA4FF;
+    --main-black: #000112;
+    --shade-1-gray: #20212C;
+    --shade-2-gray: #2B2C37;
+    --shade-3-gray: #3E3F4E;
+    --shade-4-gray: #828FA3;
+    --cold-white: #E4EBFA; 
+
+    font-family: Plus Jakarta Sans !important;
+    font-weight: 700;
+
+    background-color:  var(--cold-white);
+    margin: 0;
+
+
+    /* prevent texts being highlighted */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+
+/* prevents image from being dragged around */
+img {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+   
+}
+
+button:hover {
+    box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.2);
+    transition: 0.2s;
+}
+
+/* preset heading stylings */
+.heading-xl {
+    font-family: Plus Jakarta Sans;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 30px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: var(--main-black)
+}
+
+.heading-l {
+    font-family: Plus Jakarta Sans;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 23px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: var(--main-black)
+}
+
+.heading-m {
+    font-family: Plus Jakarta Sans;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 19px;
+    letter-spacing: 0px;
+    text-align: left;
+    color: var(--main-black)
+}
+
+.heading-s {
+    font-family: Plus Jakarta Sans;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 15px;
+    letter-spacing: 2.4000000953674316px;
+    text-align: left;
+    color: var(--shade-4-gray)
+}
+
+.sub-text-m {
+    font-family: Plus Jakarta Sans;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 19px;
+    letter-spacing: 0px;
+    /* text-align: left; */
+    color: var(--shade-3-gray);
+}
+
+.button-large-main-purple {
+    font-family: Plus Jakarta Sans;
+    font-weight: bold;
+
+    border-radius: 24px;
+    border-width: 0;
+
+    height: 48px;
+    background-color: var(--main-purple);
+    color: var(--cold-white);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 15px 25px 14px 25px;
+}
