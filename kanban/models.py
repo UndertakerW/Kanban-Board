@@ -11,11 +11,13 @@ class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="profile_user")
     register_type = models.CharField(max_length=20)
     authentication_status = models.BooleanField(default=False)
+    profile_description = models.TextField(max_length=50, null=True)
 
 
 # Model name:               Workspace
 # Usage:                    The workspace information stores here, it contains a creation user
 #                           and many participant.
+# id:                       A unique identifier (auto generated)
 # name:                     The identification of the workspace
 # creator:                  The user who created the workspace
 # participants:             The participating relationship indicates which users are participant
@@ -27,8 +29,9 @@ class Profile(models.Model):
 #                           defined by backend. Users can only choose between them.
 
 class Workspace(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    creator = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    creator = models.OneToOneField(User, on_delete=models.CASCADE)
     participants = models.ManyToManyField(User, related_name="participant")
     color_scheme = models.IntegerField()
 
@@ -36,6 +39,7 @@ class Workspace(models.Model):
 # Model name:               Task
 # Usage:                    The task information stores here. A task is assigned to only one
 #                           user, who is the assignee. It doesn't matter who created the task.
+# id:                       A unique identifier (auto generated)
 # taskname:                 The identification of the task.
 # description:              The description of the task.
 # assignee:                 The assignee of the task is a user in the workspace.
@@ -47,11 +51,13 @@ class Workspace(models.Model):
 # priority:                 There are 3 priority:
 #                               1. High     2.Medium    3.Low
 class Task(models.Model):
+    id = models.AutoField(primary_key=True)
     taskname = models.TextField(max_length=50)
     description = models.TextField(max_length=500)
     assignee = models.ForeignKey(User, default=None, on_delete=models.PROTECT, to_field='id')
     creation_date = models.DateField()
     due_date = models.DateField()
     status = models.IntegerField()
-    sprint = models.IntegerField()
+    # Delete sprint temporarily since we didn't plan a method to create sprints
+    # sprint = models.IntegerField()
     priority = models.IntegerField()

@@ -41,6 +41,7 @@ class RegisterForm(forms.Form):
                                widget=forms.TextInput(
                                    attrs={
                                        'id': 'id_username',
+                                       'class': "form-control",
                                    }
                                ))
     password1 = forms.CharField(max_length=200,
@@ -48,28 +49,33 @@ class RegisterForm(forms.Form):
                                 widget=forms.PasswordInput(
                                     attrs={
                                         'id': 'id_password',
+                                        'class': "form-control",
                                     }))
     password2 = forms.CharField(max_length=200,
                                 label='Confirm password',
                                 widget=forms.PasswordInput(
                                     attrs={
                                         'id': 'id_confirm_password',
+                                        'class': "form-control",
                                     }))
     email = forms.CharField(max_length=50,
                             widget=forms.EmailInput(
                                 attrs={
                                     'id': 'id_email',
+                                    'class': "form-control",
                                 }))
     first_name = forms.CharField(max_length=20,
                                  widget=forms.TextInput(
                                      attrs={
                                          'id': 'id_first_name',
+                                         'class': "form-control",
                                      }
                                  ))
     last_name = forms.CharField(max_length=20,
                                 widget=forms.TextInput(
                                     attrs={
                                         'id': 'id_last_name',
+                                        'class': "form-control",
                                     }
                                 ))
 
@@ -100,8 +106,8 @@ class NewWorkspaceForm(forms.ModelForm):
     )
 
     color_scheme_choices = [
-        ('Light'),
-        ('Dark'),
+        (1, 'Light'),
+        (2, 'Dark')
         # Add more color schemes if needed
     ]
     color_scheme = forms.ChoiceField(
@@ -115,3 +121,42 @@ class NewWorkspaceForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'id': 'id_name_input_text'}),
         }
+
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        a=1
+    #     model = Task
+    #     fields = '__all__'
+    #
+    #     STATUS_CHOICES = (
+    #         (1, 'To do'),
+    #         (2, 'In progress'),
+    #         (3, 'Done'),
+    #     )
+    #
+    #     PRIORITY_CHOICES = (
+    #         (1, 'High'),
+    #         (2, 'Medium'),
+    #         (3, 'Low'),
+    #     )
+    #
+    #     widgets = {
+    #         'taskname': forms.TextInput(attrs={'id': 'id_taskname_input_text'}),
+    #         'description': forms.TextInput(attrs={'id': 'id_description_input_text'}),
+    #         'assignee': forms.ModelChoiceField(queryset=User.objects.all(), attrs={'id': 'id_assignee_input_select'}),
+    #         'creation_date': forms.DateField(attrs={'id': 'id_creation_date_input_date'}),
+    #         'due_date': forms.DateField(attrs={'id': 'id_due_date_input_date'}),
+    #         'status': forms.Select(choices=STATUS_CHOICES, attrs={'id': 'id_status_input_select'}),
+    #         'priority': forms.Select(choices=PRIORITY_CHOICES, attrs={'id': 'id_priority_input_select'}),
+    #     }
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['profile_description']
+
+        widgets = {
+            'profile_description': forms.TextInput(attrs={'id': 'id_profile_description_text'})
+        }
+
