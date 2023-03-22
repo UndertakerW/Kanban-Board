@@ -191,6 +191,7 @@ def register_action(request):
 @_status_check
 def create_workspace_action(request, selected_workspace_id):
     workspaces = Workspace.objects.filter(participants=request.user)
+
     selected_workspace = get_object_or_404(Workspace, id=selected_workspace_id)
     context = {
             'username': request.user.first_name + ' ' + request.user.last_name,
@@ -209,7 +210,10 @@ def create_workspace_action(request, selected_workspace_id):
     workspace.creator = request.user
 
     new_workspace_form = NewWorkspaceForm(request.POST, instance=workspace)
+    #print(request.POST['name'])
 
+    # TODO: should clarify where the create action happens. If it happens
+    # on the profile page, then it should return profile page.
     if not new_workspace_form.is_valid():
         context['form'] = new_workspace_form
         context['task_form'] = TaskForm()
@@ -217,7 +221,7 @@ def create_workspace_action(request, selected_workspace_id):
 
     new_workspace_form.save()
     context['message'] = 'The board \'{}\' is created Successfully! :)'.format(new_workspace_form.cleaned_data['name'])
-    context['selected_workspace'] = new_workspace_form.name
+    context['selected_workspace'] = new_workspace_form.cleaned_data['name']
     context['task_form'] = TaskForm()
     return render(request, 'kanban/workspace.html', context)
 
