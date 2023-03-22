@@ -19,8 +19,6 @@
             <div class="login-form-wrapper">
                 <img class="login-logo" src="{% static 'kanban/imgs/logo-dark.svg' %}">
                 <h3 class="sub-text-m">Welcome! Let us get started.</h3>
-                <!-- TODO Login form -->
-                
                 <form method="POST" action="{% url 'login' %}">
                     {% csrf_token %}
                     {{ form }}

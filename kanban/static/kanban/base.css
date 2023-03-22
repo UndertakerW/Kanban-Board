@@ -157,6 +157,7 @@ button:hover {
     color: var(--error-red);
 }
 
+/* links */
 .link-no-underline {
     text-decoration: none;
 }
