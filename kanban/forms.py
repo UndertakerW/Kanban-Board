@@ -5,6 +5,21 @@ from django.contrib.auth import authenticate
 from kanban.models import Profile, Task, Workspace
 
 
+class OTPForm(forms.Form):
+    username = forms.CharField(max_length=20, widget=forms.TextInput(
+        attrs={
+            'id': 'id_username',
+            'class': "form-control",
+        }
+    ))
+    otp = forms.CharField(max_length=50, widget=forms.TextInput(
+        attrs={
+            'id': 'otp',
+            'class': "form-control",
+        }
+    ))
+
+
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=20, widget=forms.TextInput(
         attrs={
@@ -36,7 +51,6 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(forms.Form):
-
     username = forms.CharField(max_length=20,
                                widget=forms.TextInput(
                                    attrs={
@@ -125,7 +139,7 @@ class NewWorkspaceForm(forms.ModelForm):
 
 class TaskForm(forms.ModelForm):
     class Meta:
-        a=1
+        a = 1
     #     model = Task
     #     fields = '__all__'
     #
@@ -151,6 +165,7 @@ class TaskForm(forms.ModelForm):
     #         'priority': forms.Select(choices=PRIORITY_CHOICES, attrs={'id': 'id_priority_input_select'}),
     #     }
 
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -159,4 +174,3 @@ class ProfileForm(forms.ModelForm):
         widgets = {
             'profile_description': forms.TextInput(attrs={'id': 'id_profile_description_text'})
         }
-

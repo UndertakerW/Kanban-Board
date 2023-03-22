@@ -27,4 +27,5 @@ urlpatterns = [
     path('create_task', views.create_task_action, name='create-task'),
     path('edit-task/<int:task_id>', views.edit_task_action, name='edit-task'),
     path('edit-user-profile', views.edit_user_profile, name='edit-user-profile'),
+    path('otp_verify', views.otp_verify, name="otp_verify")
 ]

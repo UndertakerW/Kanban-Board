@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+
+
 # Create your models here.
 
 # Model name:               Profile
@@ -10,6 +12,7 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.PROTECT, related_name="profile_user")
     register_type = models.CharField(max_length=20)
+    otp = models.CharField(max_length=30, default=0)
     authentication_status = models.BooleanField(default=False)
     profile_description = models.TextField(max_length=50, null=True)
 

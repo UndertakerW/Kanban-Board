@@ -1,10 +1,12 @@
 from django.contrib.auth.decorators import login_required
+import time
+import pyopt
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
-from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm
+from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm, OTPForm
 from kanban.models import Profile, Workspace, Task
 
 
@@ -16,7 +18,7 @@ def _status_check(action_function):
     def my_wrapper_function(request, *args, **kwargs):
         profile = Profile.objects.get(user=request.user)
         if not profile.authentication_status:
-            return render(request, 'kanban/2fa.html')
+            return render(request, 'kanban/otp.html')
         return action_function(request, *args, **kwargs)
 
     return my_wrapper_function
@@ -37,6 +39,26 @@ def compute_context(request):
     context['username'] = username
     context['full_name'] = fullname
     return context
+
+
+def otp_verify(request):
+    context = compute_context(request)
+
+    # Creates a bound form from the request POST parameters and makes the
+    # form available in the request context dictionary.
+    form = OTPForm(request.POST)
+    context['form'] = form
+
+    # Validates the form.
+    if not form.is_valid():
+        return render(request, 'kanban/otp.html', context)
+
+    user = get_object_or_404(User, username=form.cleaned_data['username'])
+    profile = get_object_or_404(Profile, user=user)
+    if profile.otp == form.cleaned_data['otp']:
+        profile.authentication_status = True
+        profile.save()
+    return redirect(reverse('home'))
 
 
 @login_required
@@ -103,7 +125,7 @@ def login_action(request):
 @login_required
 def logout_action(request):
     context = {}
-    render(request, "kanban/login.html", context)
+    return render(request, "kanban/login.html", context)
 
 
 # Function name:    register_action
@@ -128,6 +150,10 @@ def register_action(request):
     if not form.is_valid():
         return render(request, 'kanban/register.html', context)
 
+    if User.objects.filter(username=form.cleaned_data['username']).first():
+        # messages.error(request, "This username is already taken")
+        return redirect('home')
+
     # At this point, the form data is valid.  Register and login the user.
     new_user = User.objects.create_user(username=form.cleaned_data['username'],
                                         password=form.cleaned_data['password1'],
@@ -141,10 +167,13 @@ def register_action(request):
 
     profile = Profile()
     profile.user = new_user
+    profile.otp = 111
+    # random.randint(1000, 9999)
     profile.save()
 
-    login(request, new_user)
-    return redirect(reverse('home'))
+    # return render(request, 'kanban/otp.html', context)
+    # login(request, new_user)
+    return redirect(reverse('otp_verify'))
 
 
 # Function name:    home_action
