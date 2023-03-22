@@ -1,1 +1,31 @@
-{% comment %}This is the page showing the login user's profile{% endcomment %}
+{% extends "kanban/base.html" %}
+{% load static %}
+
+{% block user-info %}
+    <div class="user_info_class">
+    <div id = "id_user_name">
+        <a id = "id_nav_profile">{{ full_name }} </a>
+    </div>
+    <br>
+    <div id = id_links>
+        <a id = "id_nav_logout" href="{% url 'logout' %}">Logout</a>
+    </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'edit-user-profile' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div id = "id_profile_description">
+            Profile description:
+            {{ profile_form.profile_description }}
+        </div>
+    </form>
+
+    <a href="{% url 'create-workspace' %}">
+        <button id = "id_create_workspace_button" type = "submit" name = "id_create_workspace_button">Create Workspace</button>
+    </a>
+
+    <div>Workspaces list: {{ workspaces }}</div>
+{% endblock %}
+
