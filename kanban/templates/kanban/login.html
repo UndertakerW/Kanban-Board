@@ -14,12 +14,18 @@
 	</head>
     <body>
         <div class="login-wrapper">
-            <img class="login-logo" src="{% static 'kanban/imgs/logo-dark.svg' %}">
-            <h3 class="sub-text-m">Welcome! Let us get started.</h3>
-            <button class="button-large-main-purple">
-                <img class="login-icon-google" src="{% static 'kanban/imgs/icon-google.png'%}"> 
-                <span>Login with Google</span> 
-            </button>
+            <div class="login-img-wrapper">
+                <img src="{% static 'kanban/imgs/graphic-woman-at-desk.svg' %}">
+            </div>
+            <div class="login-form-wrapper">
+                <img class="login-logo" src="{% static 'kanban/imgs/logo-dark.svg' %}">
+                <h3 class="sub-text-m">Welcome! Let us get started.</h3>
+                <!-- TODO Login form -->
+                <button class="button-large-main-purple">
+                    <img class="login-icon-google" src="{% static 'kanban/imgs/icon-google.png'%}"> 
+                    <span>Login with Google</span> 
+                </button>
+            </div>
         </div>
     </body>
 </html>

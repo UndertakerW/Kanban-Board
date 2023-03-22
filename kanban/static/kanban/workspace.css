@@ -1,0 +1,132 @@
+.workspace-header-wrapper {
+    height: 97px;
+    width: 100vw;
+    background-color: white;
+    display: flex;
+
+}
+
+.header-logo {
+    padding: 32.78px 0px 37px 34px;
+    width: calc(300px);
+    border-right: 1px solid var(--cold-white);
+}
+
+.workspace-header-content {
+    padding: 29px 32.38px 37px 24px;
+    width: calc(100vw - 300px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.workspace-header-options {
+    min-width: calc(100vw - 606.38px);
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.add-task-btn {
+    margin: 0 24px;
+    color: white;
+}
+
+.ellipsis-btn {
+    width: min-content;
+    height: min-content;
+    background-color: rgba(0, 0, 0, 0);
+    border: 0px;
+}
+
+.ellipsis-btn {
+    padding: 0;
+}
+
+/* collapsible sidebar */
+.sidebar-wrapper {
+    width: 300px;
+    background-color: white;
+    border-right: 1px solid var(--cold-white);
+    height: calc(100vh - 97px);
+    
+}
+
+.sidebar-logo img {
+    width: 152.53px;
+}
+
+.sidebar-heading {
+    padding-left: 34px;
+}
+
+.sidebar-boards {
+    padding: 19px 0 19px 0;
+}
+
+.sidebar-board-option {
+    width: calc(276px - 34px);
+    padding: 14px 0 15px 34px;
+    border-radius: 0px 100px 100px 0px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar-board-option-active {
+    background-color: var(--main-purple);
+    color: white;
+}
+
+.sidebar-board-option-create-board {
+    background-color: rgba(0,0,0,0);
+    color: var(--main-purple);
+    border: none;
+    border-radius: 0;
+    width: 300px;
+}
+
+.sidebar-board-option:hover {
+    box-shadow: 0px 0px 6px rgba(54, 78, 126, 0.2);
+    transition: 0.2s;
+}
+
+.sidebar-board-option img {
+    padding-right: 16px;
+}
+
+/* the workspace/board area */
+.workspace-board {
+    width: calc(100vw - 300px);
+    height: calc(100vh - 98px);
+    padding: 24px;
+    background-color:  var(--cold-white);
+
+    overflow: scroll;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+}
+
+.column {
+    width: 280px;
+    margin-top: 24px;
+    margin-right: 24px;
+    height: 200px;
+}
+
+.task-wrapper {
+    width: 280px;
+    min-height: 88px;
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.101545);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 16px 23px;
+}
+
+.task-title {
+    margin: 20px;
+}
