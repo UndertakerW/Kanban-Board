@@ -17,8 +17,6 @@ body {
 
     font-family: Plus Jakarta Sans !important;
     font-weight: 700;
-
-    background-color:  var(--cold-white);
     margin: 0;
 
 
@@ -119,6 +117,24 @@ button:hover {
     height: 48px;
     background-color: var(--main-purple);
     color: var(--cold-white);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 15px 25px 14px 25px;
+}
+
+.button-secondary-l {
+    font-family: Plus Jakarta Sans;
+    font-weight: bold;
+
+    border-radius: 24px;
+    border-width: 0;
+
+    height: 48px;
+    background-color: var(--cold-white);
+    color: var(--main-purple);
 
     display: flex;
     align-items: center;

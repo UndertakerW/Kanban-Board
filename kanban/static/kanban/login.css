@@ -28,6 +28,11 @@
     margin-right: 10px;
 }
 
-.button-large-main-purple {
+.spaced-button {
     margin-top: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
 }

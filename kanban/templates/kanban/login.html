@@ -24,14 +24,14 @@
                 <form method="POST" action="{% url 'login' %}">
                     {% csrf_token %}
                     {{ form }}
-                    <button type="submit" class="button-large-main-purple width-max">Login</button>
+                    <button type="submit" class="button-large-main-purple width-max spaced-button">Login</button>
                 </form>
 
-                <button class="button-large-main-purple">
+                <button class="button-secondary-l spaced-button">
                     <img class="login-icon-google" src="{% static 'kanban/imgs/icon-google.png'%}"> 
                     <span>Login with Google</span> 
                 </button>
-                <a href="{% url 'register' %}" id="id_register_link">Register</a>
+                <a href="{% url 'register' %}" class="spaced-button" id="id_register_link">Register</a>
             </div>
         </div>
     </body>
