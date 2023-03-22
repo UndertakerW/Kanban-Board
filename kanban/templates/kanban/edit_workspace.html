@@ -1,0 +1,27 @@
+{% comment %}This is the page showing the edit workspace{% endcomment %}
+
+{% block content %}
+    <div class="page-name" id="id_page_name">
+        Edit Workspace {{ workspace.name }} 
+    </div>
+
+    <div class="edit-workspace-div">
+        <table class="edit-workspace-table">
+            <tr>
+                <td>
+                    <form method="post" action="{% url 'workspace' workspace.id 'edit' %}">
+                        <table>
+                            {{ form }}
+                        </table>
+                        {% csrf_token %}
+                        <button type="submit" id="id_edit_workspace_button">Submit</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+
+
+{% endblock %}

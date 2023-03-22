@@ -4,8 +4,23 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
-from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm
-from kanban.models import Profile, Workspace
+from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm
+from kanban.models import Profile, Workspace, Task
+
+
+# Function name:    _status_check
+# Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
+# Parameter:        An action function
+# Return:           A wrapped function
+def _status_check(action_function):
+    def my_wrapper_function(request, *args, **kwargs):
+        profile = Profile.objects.get(user=request.user)
+        if not profile.authentication_status:
+            return render(request, 'kanban/2fa.html')
+        return action_function(request, *args, **kwargs)
+
+    return my_wrapper_function
+
 
 # Function name:    compute_context
 # Usage:            Compute the HTTP context
@@ -23,17 +38,15 @@ def compute_context(request):
     context['full_name'] = fullname
     return context
 
-# Function name:    _status_check
-# Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
-# Parameter:        An action function
-# Return:           A wrapped function
-def _status_check(action_function):
-    def my_wrapper_function(request, *args, **kwargs):
-        profile = Profile.objects.get(user=request.user)
-        if not profile.authentication_status:
-            return render(request, 'kanban/2fa.html')
-        return action_function(request, *args, **kwargs)
-    return my_wrapper_function
+
+@login_required
+@_status_check
+def compute_edit_workspace_context(request, context, workspace):
+    context['workspace'] = workspace
+    form = NewWorkspaceForm()
+    form.initial['name'] = workspace.name
+    context['form'] = form
+
 
 # Naming regulation: For better understanding, the actions should all name
 # in: {name}_action
@@ -47,7 +60,14 @@ def _status_check(action_function):
 @login_required
 @_status_check
 def home_action(request):
-    context = {}
+    context = compute_context(request)
+    user = request.user
+
+    profile = get_object_or_404(Profile, user=user)
+    workspaces = Workspace.objects.filter(participants=user)
+
+    context["profile_form"] = profile
+    context["workspaces"] = workspaces
     render(request, "kanban/profile.html", context)
 
 
@@ -79,10 +99,12 @@ def login_action(request):
     login(request, new_user)
     return redirect(reverse('home'))
 
+
 @login_required
 def logout_action(request):
     context = {}
     render(request, "kanban/login.html", context)
+
 
 # Function name:    register_action
 # url:              /register
@@ -124,6 +146,7 @@ def register_action(request):
     login(request, new_user)
     return redirect(reverse('home'))
 
+
 # Function name:    home_action
 # url:              /
 # Usage:            Deal with the home action.
@@ -133,7 +156,8 @@ def register_action(request):
 @_status_check
 def home_action(request):
     return
-    #TODO
+    # TODO
+
 
 # Function name:    create_workspace_action
 # url:              /workspace/create
@@ -144,7 +168,9 @@ def home_action(request):
 @_status_check
 def create_workspace_action(request):
     if request.method == 'GET':
-        return home_action(request)
+        context = compute_context(request)
+        context['form'] = NewWorkspaceForm()
+        return render(request, 'kanban/create_workspace.html', context)
 
     workspace = Workspace()
 
@@ -159,33 +185,101 @@ def create_workspace_action(request):
     new_workspace_form.save()
 
     message = 'Workspace created'
-    
+
     context = compute_context(request)
     context['message'] = message
     context['new_post_form'] = NewWorkspaceForm()
     return render(request, 'kanban/home.html', context)
 
+
+# Function name:    edit_workspace_action
+# url:              /workspace/:id/edit
+# Usage:            Deal with the edit workspace action.
+# Parameter:        The http request.
+# Return:           render() or redirect()
 @login_required
 @_status_check
-def edit_workspace_name_action(request):
-    context = {}
-    render(request, "kanban/workspace.html", context)
+def edit_workspace_action(request, workspace_id):
+    context = compute_context(request)
+    compute_edit_workspace_context(request, context, workspace)
+
+    workspace = get_object_or_404(Workspace, id=workspace_id)
+
+    # Just display the workspace form if this is a GET request.
+    if request.method == 'GET':
+        return render(request, 'kanban/edit_workspace.html', context)
+
+    if request.method == 'POST':
+        form = NewWorkspaceForm(request.POST, request.FILES, instance=workspace)
+        if not form.is_valid():
+            context['form'] = form
+            return render(request, 'kanban/edit_workspace.html', context)
+        else:
+            form.save()
+            context['message'] = 'Workspace #{0} updated.'.format(workspace.id)
+            return render(request, 'kanban/workspace.html', context)
+
 
 @login_required
 @_status_check
 def create_task_action(request):
-    context = {}
+    context = compute_context(request)
+
+    if request.method == "GET":
+        context["form"] = TaskForm(initial={
+            "taskname": "",
+            "description": "",
+            "assignee": "",
+            "creation_date": "",
+            "due_date": "",
+            "status": "",
+            "priority": "",
+        })
+        render(request, "kanban/task.html", context)
+
+    task_form = TaskForm(request.POST)
+    # TODO: check validation of the form and give error message
+    task_form.save()
+    context["form"] = task_form
+
     render(request, "kanban/task.html", context)
+
 
 @login_required
 @_status_check
-def edit_task_action(request):
-    context = {}
+def edit_task_action(request, task_id):
+    context = compute_context(request)
+
+    task = get_object_or_404(Task, id=task_id)
+    if request.method == "GET":
+        form = TaskForm(instance=task)
+        context["task_form"] = form
+        return render(request, "kanban/task.html", context)
+
+    task_form = TaskForm(request.POST, instance=task)
+    # TODO: check validation of the form and give error message
+    task_form.save()
+    context["task_form"] = task_form
+
     render(request, "kanban/task.html", context)
+
 
 @login_required
 @_status_check
 def edit_user_profile(request):
-    context = {}
-    render(request, "kanban/profile.html", context)
+    context = compute_context(request)
+    user = request.user
 
+    profile = get_object_or_404(Profile, user=user)
+    workspaces = Workspace.objects.filter(participants=user)
+
+    if request.method == "GET":
+        context["profile_form"] = profile
+        context["workspaces"] = workspaces
+        render(request, "kanban/profile.html", context)
+
+    profile_form = ProfileForm(request.POST)
+    profile_form.save()
+    context["profile_form"] = profile
+
+    render(request, "kanban/profile.html", context)

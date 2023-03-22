@@ -1,0 +1,22 @@
+*.log
+*.pot
+*.pyc
+local_settings.py
+config.ini
+*.pyc
+migrations
+.DS_Store
+venv
+my_env
+.idea
+
+# Editor backup files
+*~
+*#
+*.swp
+
+# Mac OS data store file
+.DS_Store
+
+# Django's SQL Lite Database File
+db.sqlite3

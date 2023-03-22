@@ -1,0 +1,23 @@
+[33mcommit 54cb5c0c17d71b4329158153b6a2997f17959808[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: Joanna <zhongzuo@andrew.cmu.edu>
+Date:   Sun Mar 19 02:09:29 2023 -0700
+
+    1. update the profile model to have a many to many relationship with workspace
+
+[33mcommit a5a247d34f6d938ce94fef298308855932e6900e[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Joanna <zhongzuo@andrew.cmu.edu>
+Date:   Sun Mar 19 01:59:23 2023 -0700
+
+    1. create skeleton of the project, including functions/pages/urls for sprint 1;  2. create forms of login and register
+
+[33mcommit ee060989cc38c61745be7bfb2851d697d24bf94d[m
+Author: Joanna <zhongzuo@andrew.cmu.edu>
+Date:   Sun Mar 19 01:08:53 2023 -0700
+
+    1.Create the project; 2.Create the data model as discussed, with comments
+
+[33mcommit 2e03d4d0626e0b7bec55916fe4bd1697086c4e1d[m
+Author: Jeffrey Eppinger <je0k@andrew.cmu.edu>
+Date:   Sun Mar 12 15:28:45 2023 -0400
+
+    Initial commit
