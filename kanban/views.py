@@ -34,14 +34,15 @@ def _status_check(action_function):
 # Return:           HTTP context
 def compute_context(request):
     context = {}
-    username = None
-    fullname = None
     if request.user.is_authenticated:
-        user = User.objects.get(username=request.user.username)
-        username = user.username
-        fullname = user.first_name + ' ' + user.last_name
-    context['username'] = username
-    context['full_name'] = fullname
+        workspaces = Workspace.objects.filter(participants=request.user)
+        context = {
+            'username': request.user.first_name + ' ' + request.user.last_name,
+            'workspaces': workspaces,
+            'form': NewWorkspaceForm(),
+            'message': '',
+            'task_form': TaskForm(),
+        }
     return context
 
 
@@ -189,18 +190,10 @@ def register_action(request):
 # Return:           render() or redirect()
 @login_required
 @_status_check
-def create_workspace_action(request, selected_workspace_id):
-    workspaces = Workspace.objects.filter(participants=request.user)
+def create_workspace_action(request):
 
-    selected_workspace = get_object_or_404(Workspace, id=selected_workspace_id)
-    context = {
-            'username': request.user.first_name + ' ' + request.user.last_name,
-            'workspaces': workspaces,
-            'form': NewWorkspaceForm(),
-            'message': '',
-            'selected_workspace': selected_workspace,
-            'task_form': TaskForm(),
-        }
+    context = compute_context(request)
+
     if request.method == 'GET':
         workspaces = Workspace.objects.filter(participants=request.user)
         return render(request, 'kanban/workspace.html', context)
@@ -223,7 +216,7 @@ def create_workspace_action(request, selected_workspace_id):
     context['message'] = 'The board \'{}\' is created Successfully! :)'.format(new_workspace_form.cleaned_data['name'])
     context['selected_workspace'] = new_workspace_form.cleaned_data['name']
     context['task_form'] = TaskForm()
-    return render(request, 'kanban/workspace.html', context)
+    return redirect('workspace/{}'.format(workspace.id))
 
 # Function name:    workspace_action
 # url:              /workspace
@@ -237,14 +230,8 @@ def workspace_action(request, selected_workspace_id):
     if request.method == 'GET':
         workspaces = Workspace.objects.filter(participants=request.user)
         selected_workspace = get_object_or_404(Workspace, id=selected_workspace_id)
-        context = {
-            'username': request.user.first_name + ' ' + request.user.last_name,
-            'workspaces': workspaces,
-            'form': NewWorkspaceForm(),
-            'message': '',
-            'selected_workspace': selected_workspace,
-            'task_form': TaskForm(),
-        }
+        context = compute_context(request)
+        context['selected_workspace'] = selected_workspace
 
         return render(request, 'kanban/workspace.html', context)
 
