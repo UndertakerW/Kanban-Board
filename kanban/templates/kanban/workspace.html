@@ -117,7 +117,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" class="modal-workspace-creation-form" action="/workspace/{{ selected_workspace.id }}/create/">
+                    <form method="post" class="modal-workspace-creation-form" action="../create-workspace">
                         {{ form }}
                         {% csrf_token %}
                         <button type="submit" class="button-large-main-purple modal-button">Submit</button>
