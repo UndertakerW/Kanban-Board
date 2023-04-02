@@ -145,7 +145,7 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" class="modal-workspace-edit-form" action="{% url 'edit-workspace' selected_workspace_id=workspace.id %}">
+                    <form method="post" class="modal-workspace-edit-form" action="{% url 'edit-workspace' selected_workspace_id=selected_workspace.id %}">
                         {{ edit_form }}
                         {% csrf_token %}
                         <button type="submit" class="button-large-main-purple modal-button">Submit</button>
