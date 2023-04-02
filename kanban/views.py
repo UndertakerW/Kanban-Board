@@ -70,9 +70,10 @@ def otp_verify(request):
 @_status_check
 def compute_edit_workspace_context(request, context, workspace):
     context['workspace'] = workspace
-    form = NewWorkspaceForm(user=request.user)
-    form.initial['name'] = workspace.name
-    context['form'] = form
+    edit_form = NewWorkspaceForm(user=request.user, instance=workspace)
+    edit_form.initial['name'] = workspace.name
+    context['edit_form'] = edit_form
+    print(edit_form)
 
 
 # Naming regulation: For better understanding, the actions should all name
@@ -228,13 +229,17 @@ def create_workspace_action(request):
 @_status_check
 def workspace_action(request, selected_workspace_id):
     # Currently its visiting the workspace anyways
-    if request.method == 'GET':
-        workspaces = Workspace.objects.filter(participants=request.user)
-        selected_workspace = get_object_or_404(Workspace, id=selected_workspace_id)
-        context = compute_context(request)
-        context['selected_workspace'] = selected_workspace
+    workspaces = Workspace.objects.filter(participants=request.user)
+    selected_workspace = get_object_or_404(Workspace, id=selected_workspace_id)
+    context = compute_context(request)
+    context['selected_workspace'] = selected_workspace
 
-        return render(request, 'kanban/workspace.html', context)
+    # If the current user is the creator
+    if selected_workspace.creator == request.user:
+        compute_edit_workspace_context(request, context, selected_workspace)
+        # Enable edit button in template
+
+    return render(request, 'kanban/workspace.html', context)
 
 # Function name:    edit_workspace_action
 # url:              /workspace/:id/edit
@@ -243,27 +248,27 @@ def workspace_action(request, selected_workspace_id):
 # Return:           render() or redirect()
 @login_required
 @_status_check
-def edit_workspace_action(request, workspace_id):
+def edit_workspace_action(request, selected_workspace_id):
     context = compute_context(request)
-    workspace = get_object_or_404(Workspace, id=workspace_id)
+    workspace = get_object_or_404(Workspace, id=selected_workspace_id)
 
     compute_edit_workspace_context(request, context, workspace)
 
-    # Just display the workspace form if this is a GET request.
+    # Just display the workspace if this is a GET request.
     if request.method == 'GET':
-        return render(request, 'kanban/edit_workspace.html', context)
+        return redirect(reverse('workspace', args=[selected_workspace_id]))
 
     if request.method == 'POST':
-        form = NewWorkspaceForm(request.POST, request.FILES, instance=workspace)
-        if not form.is_valid():
-            context['form'] = form
-            return render(request, 'kanban/edit_workspace.html', context)
+        edit_form = NewWorkspaceForm(request.POST, request.FILES, instance=workspace)
+        if not edit_form.is_valid():
+            context['edit_form'] = edit_form
+            return redirect(reverse('workspace', args=[selected_workspace_id]))
         else:
-            form.save()
+            edit_form.save()
             # Add the current user to participants
             workspace.participants.add(request.user.id)
             context['message'] = 'Workspace #{0} updated.'.format(workspace.id)
-            return render(request, 'kanban/workspace.html', context)
+            return redirect(reverse('workspace', args=[selected_workspace_id]))
 
 
 @login_required
