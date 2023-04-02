@@ -39,7 +39,7 @@ def compute_context(request):
         context = {
             'username': request.user.first_name + ' ' + request.user.last_name,
             'workspaces': workspaces,
-            'form': NewWorkspaceForm(),
+            'form': NewWorkspaceForm(user=request.user),
             'message': '',
             'task_form': TaskForm(),
         }
@@ -70,7 +70,7 @@ def otp_verify(request):
 @_status_check
 def compute_edit_workspace_context(request, context, workspace):
     context['workspace'] = workspace
-    form = NewWorkspaceForm()
+    form = NewWorkspaceForm(user=request.user)
     form.initial['name'] = workspace.name
     context['form'] = form
 
@@ -95,7 +95,6 @@ def home_action(request):
 
     context['profile_form'] = profile
     context['workspaces'] = workspaces
-    context['form'] = NewWorkspaceForm()
     return render(request, 'kanban/profile.html', context)
 
 
@@ -195,7 +194,7 @@ def create_workspace_action(request):
     context = compute_context(request)
 
     if request.method == 'GET':
-        workspaces = Workspace.objects.filter(participants=request.user)
+        # workspaces = Workspace.objects.filter(participants=request.user)
         return render(request, 'kanban/workspace.html', context)
 
     workspace = Workspace()
@@ -271,7 +270,7 @@ def create_task_action(request, selected_workspace_id):
     context = {
         'username': request.user.first_name + ' ' + request.user.last_name,
         'workspaces': workspaces,
-        'form': NewWorkspaceForm(),
+        'form': NewWorkspaceForm(user=request.user),
         'message': '',
         'selected_workspace': selected_workspace,
         'task_form': TaskForm(initial={
@@ -327,12 +326,10 @@ def edit_user_profile(request):
     if request.method == 'GET':
         context['profile_form'] = profile
         context['workspaces'] = workspaces
-        context['form'] = NewWorkspaceForm()
         return render(request, 'kanban/profile.html', context)
 
     profile_form = ProfileForm(request.POST)
     profile_form.save()
     context['profile_form'] = profile
-    context['form'] = NewWorkspaceForm()
 
     return render(request, 'kanban/profile.html', context)
