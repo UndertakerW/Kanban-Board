@@ -9,7 +9,7 @@
         <table class="edit-workspace-table">
             <tr>
                 <td>
-                    <form method="post" action="{% url 'workspace' workspace.id 'edit' %}">
+                    <form method="post" action="{% url 'edit-workspace' selected_workspace_id=workspace.id %}">
                         <table>
                             {{ form }}
                         </table>
