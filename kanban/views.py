@@ -210,8 +210,10 @@ def create_workspace_action(request):
         context['form'] = new_workspace_form
         context['task_form'] = TaskForm()
         return render(request, 'kanban/workspace.html', context)
-
+    
     new_workspace_form.save()
+    # Add the current user to participants
+    workspace.participants.add(request.user.id)
     context['message'] = 'The board \'{}\' is created Successfully! :)'.format(new_workspace_form.cleaned_data['name'])
     context['selected_workspace'] = new_workspace_form.cleaned_data['name']
     context['task_form'] = TaskForm()
@@ -258,6 +260,8 @@ def edit_workspace_action(request, workspace_id):
             return render(request, 'kanban/edit_workspace.html', context)
         else:
             form.save()
+            # Add the current user to participants
+            workspace.participants.add(request.user.id)
             context['message'] = 'Workspace #{0} updated.'.format(workspace.id)
             return render(request, 'kanban/workspace.html', context)
 
