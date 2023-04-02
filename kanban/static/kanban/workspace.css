@@ -169,6 +169,12 @@
     flex-direction: column;
 }
 
+.modal-workspace-edit-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .modal-button {
     margin-top: 10px;
 }
