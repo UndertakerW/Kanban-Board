@@ -54,3 +54,9 @@
 .profile-workspaces-title {
     margin: 20px 0 10px;
 }
+
+#id_profile_description {
+    width: 400px;
+    rows: 2;
+}
+
