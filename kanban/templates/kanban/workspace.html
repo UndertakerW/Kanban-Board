@@ -1,3 +1,5 @@
+
+
 {% comment %}This is the page showing the workspace{% endcomment %}
 <!doctype html>
 <html>
@@ -14,6 +16,11 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
         <title> {% block title %} Kanban Project Management System {% endblock %} </title>
+        <!-- Include the workspace.js file -->
+        {% load static %}
+        <script src="{% static 'workspace.js' %}"></script>
+        <!-- Pass the tasks data to JavaScript -->
+        <script id="workspace-js" type="application/json">{{ tasks|safe }}</script>
 	</head>
     <body>
         <div class="workspace-header-wrapper">
