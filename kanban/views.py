@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.core import serializers
 
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm, OTPForm
 from kanban.models import Profile, Workspace, Task
@@ -16,9 +17,9 @@ from kanban.models import Profile, Workspace, Task
 # Return:           A wrapped function
 def _status_check(action_function):
     def my_wrapper_function(request, *args, **kwargs):
-        print('====== user is: ')
-        print(Profile.objects.all()[0].user)
-        print(request.user)
+        # print('====== user is: ')
+        # print(Profile.objects.all()[0].user)
+        # print(request.user)
         
         profile = Profile.objects.get(user=request.user)
         if not profile.authentication_status:
@@ -229,10 +230,14 @@ def create_workspace_action(request):
 @_status_check
 def workspace_action(request, selected_workspace_id):
     # Currently its visiting the workspace anyways
-    workspaces = Workspace.objects.filter(participants=request.user)
+    #workspaces = Workspace.objects.filter(participants=request.user)
     selected_workspace = get_object_or_404(Workspace, id=selected_workspace_id)
     context = compute_context(request)
     context['selected_workspace'] = selected_workspace
+    tasks = selected_workspace.task_workspace.all()
+    tasks_json = serializers.serialize('json', tasks)
+    context['tasks'] = tasks_json
+    #print(len(context['tasks']))
 
     # If the current user is the creator
     if selected_workspace.creator == request.user:
@@ -296,12 +301,31 @@ def create_task_action(request, selected_workspace_id):
     if request.method == 'GET':
         return render(request, 'kanban/workspace.html', context)
 
-    task_form = TaskForm(request.POST)
-    # TODO: check validation of the form and give error message
-    task_form.save()
-    context['form'] = task_form
+    # task_form = TaskForm(request.POST)
+    # # TODO: check validation of the form and give error message
 
-    return render(request, 'kanban/workspace.html', context)
+    # task_form.save()
+
+    ### TEST CODE ###
+    # Create a new task instance
+    from datetime import date
+    new_task = Task(taskname='My new task',
+                    workspace=selected_workspace,
+                    description='This is a new task',
+                    assignee=request.user,
+                    creation_date=date.today(),
+                    due_date=date(2022, 4, 30),
+                    status=1,
+                    sprint=1,
+                    priority=1)
+
+    # Save the new task to the database
+    new_task.save()
+    ### TEST CODE ###
+
+    #context['form'] = task_form
+    return redirect(reverse('workspace', args=[selected_workspace_id]))
+    #return render(request, 'kanban/workspace.html', context)
 
 
 @login_required
