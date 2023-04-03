@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.core import serializers
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
 
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm, OTPForm
 from kanban.models import Profile, Workspace, Task
@@ -45,6 +47,18 @@ def compute_context(request):
             'task_form': TaskForm(),
         }
     return context
+
+# Function name:    get_username
+# Usage:            Compute username according to user id
+# Parameter:        The http request and user id
+# Return:           JSON response or status 404
+@login_required
+def get_username(request, user_id):
+    user = user = get_object_or_404(User, id=user_id)
+    data = {
+        'username': user.first_name + ' ' +  user.last_name
+    }
+    return JsonResponse(data)
 
 
 def otp_verify(request):

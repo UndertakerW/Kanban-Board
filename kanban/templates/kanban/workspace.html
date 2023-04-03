@@ -19,7 +19,6 @@
         <script src="{% static 'kanban/workspace.js' %}"></script>
         <!-- Pass the tasks data to JavaScript -->
         <script id="workspace-js" type="application/json">{{ tasks|safe }}</script>
-        <script id="username-js" type="application/json">{{ username|safe }}</script>
 	</head>
     <body>
         <div class="workspace-header-wrapper">
