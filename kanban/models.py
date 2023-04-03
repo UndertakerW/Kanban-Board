@@ -55,13 +55,15 @@ class Workspace(models.Model):
 #                               1. High     2.Medium    3.Low
 class Task(models.Model):
     id = models.AutoField(primary_key=True)
+    workspace = models.ForeignKey(Workspace, on_delete=models.PROTECT, related_name="task_workspace")
     taskname = models.TextField(max_length=50)
     description = models.TextField(max_length=500)
     # Due to a bug remove this field temporarily
-    # assignee = models.ForeignKey(User, default=None, on_delete=models.PROTECT, to_field='id')
+    assignee = models.ForeignKey(User, on_delete=models.PROTECT, related_name="task_assignee")
+    #assignee = models.ForeignKey(User, default=None, on_delete=models.PROTECT, related_name="task_user")
     creation_date = models.DateField()
     due_date = models.DateField()
     status = models.IntegerField()
     # Remove this field temporarily since we didn't plan a method to create sprints
-    # sprint = models.IntegerField()
+    sprint = models.IntegerField()
     priority = models.IntegerField()
