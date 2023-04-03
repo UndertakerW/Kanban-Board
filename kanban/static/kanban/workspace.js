@@ -4,49 +4,42 @@ const priority_levels = ['low', 'medium', 'high'];
 
 // Function to create a task element
 function createTaskElement(task) {
-  
-  return fetch(`/get-username/${task.fields.assignee}`)
-    .then(response => response.json())
-    .then(data => {
-      const taskWrapper = document.createElement('div');
-      taskWrapper.className = 'task-wrapper';
+    const taskWrapper = document.createElement('div');
+    taskWrapper.className = 'task-wrapper';
 
-      const taskTitle = document.createElement('h4');
-      taskTitle.className = 'heading-m task-title';
-      taskTitle.textContent = task.fields.taskname;
+    const taskTitle = document.createElement('h4');
+    taskTitle.className = 'heading-m task-title';
+    taskTitle.textContent = task.fields.taskname;
 
-      const taskInfo = document.createElement('div');
-      taskInfo.className = 'task-info';
+    const taskInfo = document.createElement('div');
+    taskInfo.className = 'task-info';
 
-      const taskSprintTag = document.createElement('div');
-      taskSprintTag.className = 'task-tag';
-      taskSprintTag.textContent = 'Sprint ' + task.fields.sprint;
+    const taskSprintTag = document.createElement('div');
+    taskSprintTag.className = 'task-tag';
+    taskSprintTag.textContent = 'Sprint ' + task.fields.sprint;
 
-      const taskPriorityTag = document.createElement('div');
-      taskPriorityTag.className = 'task-tag';
-      taskPriorityTag.textContent = 'Priority: ';
+    const taskPriorityTag = document.createElement('div');
+    taskPriorityTag.className = 'task-tag';
+    taskPriorityTag.textContent = 'Priority: ';
 
-      const taskPriorityValue = document.createElement('div');
-      taskPriorityValue.className = 'task-priority-' + priority_levels[task.fields.priority];
-      taskPriorityValue.textContent = priority_levels[task.fields.priority]
+    const taskPriorityValue = document.createElement('div');
+    taskPriorityValue.className = 'task-priority-' + priority_levels[task.fields.priority];
+    taskPriorityValue.textContent = priority_levels[task.fields.priority]
 
-      taskPriorityTag.appendChild(taskPriorityValue);
+    taskPriorityTag.appendChild(taskPriorityValue);
 
-      const username = data.username;
-      const taskAssignee = document.createElement('div');
-      taskAssignee.className = 'task-assignee';
-      taskAssignee.textContent = username;
+    const taskAssignee = document.createElement('div');
+    taskAssignee.className = 'task-assignee';
+    taskAssignee.textContent = task.fields.assignee_name;
 
-      taskInfo.appendChild(taskSprintTag);
-      taskInfo.appendChild(taskPriorityTag);
-      taskInfo.appendChild(taskAssignee);
+    taskInfo.appendChild(taskSprintTag);
+    taskInfo.appendChild(taskPriorityTag);
+    taskInfo.appendChild(taskAssignee);
 
-      taskWrapper.appendChild(taskTitle);
-      taskWrapper.appendChild(taskInfo);
+    taskWrapper.appendChild(taskTitle);
+    taskWrapper.appendChild(taskInfo);
 
-      return taskWrapper;
-    })
-    .catch(error => console.error(error));
+    return taskWrapper;
 }
 
 
@@ -69,21 +62,19 @@ function compareTasks(a, b, sortBy) {
 // Function to group tasks by assignee and sort them based on the sortBy parameter
 function groupAndSortTasks(tasks, sortBy) {
     const groupedTasks = {};
-  
     tasks.forEach((task) => {
       const assignee = task.fields.assignee || 'Unassigned';
   
       if (!groupedTasks[assignee]) {
         groupedTasks[assignee] = [];
       }
-  
       groupedTasks[assignee].push(task);
     });
-  
+
     Object.values(groupedTasks).forEach((taskGroup) => {
       taskGroup.sort((a, b) => compareTasks(a, b, sortBy));
     });
-  
+
     return groupedTasks;
 }
 
@@ -125,41 +116,64 @@ function createStatusColumn(status) {
   
     return columnWrapper;
   }
+
+  function get_username(id) {
+    return fetch(`/get-username/${id}`)
+    .then(response => response.json())
+    .then(data => {
+      return data.username
+    })
+    .catch(error => {
+      console.error(error)
+      return 'Unknown'
+    });
+  }
+
+  // refine the structure, add assignee_name to each task
+  async function processTasks(tasks) {
+    for (const task of tasks) {
+      task.fields['assignee_name'] = await get_username(task.fields['assignee']) 
+    }
+    return tasks;
+  } 
   
   // Function to arrange tasks by status and assignee
-  async function arrangeTasks(tasks, sortBy) {
-    const groupedTasks = groupAndSortTasks(tasks, sortBy);
-    console.log("sorted tasks:");
-    console.log(groupedTasks);
-    // Create the status columns and append them to the columns div
-    const columnsDiv = document.getElementById('columns-div');
-    const statusColumns = statusList.map(createStatusColumn);
-    statusColumns.forEach(column => columnsDiv.appendChild(column));
-  
-    // Arrange tasks by status
-    for (const assignee in groupedTasks) {
-      groupedTasks[assignee].forEach(async (task) => {
-        const taskElement = await createTaskElement(task);
-  
-        const column = document.getElementById(`${statusDict[task.fields.status]}-column`);
-        console.log(statusDict[task.fields.status]);
-        column.appendChild(taskElement);
-      });
-    }
-    return;
-    // Arrange tasks by assignee
-    const workspaceBoardAssignee = document.getElementById('workspace-board-assignee');
-    for (const assignee in groupedTasks) {
-      const assigneeColumn = createAssigneeColumn(assignee);
-      workspaceBoardAssignee.appendChild(assigneeColumn);
-  
-      groupedTasks[assignee].forEach((task) => {
-        const taskElement = createTaskElement(task);
-  
-        const column = assigneeColumn.querySelector(`[data-assignee="${assignee}"]`);
-        column.appendChild(taskElement);
-      });
-    }
+  function arrangeTasks(tasks, sortBy) {
+    processTasks(tasks).then((processedTasks) => {
+      const groupedTasks = groupAndSortTasks(processedTasks, sortBy);
+      console.log("sorted tasks:");
+      console.log(groupedTasks);
+      // Create the status columns and append them to the columns div
+      const columnsDiv = document.getElementById('columns-div');
+      const statusColumns = statusList.map(createStatusColumn);
+      statusColumns.forEach(column => columnsDiv.appendChild(column));
+    
+      // Arrange tasks by status
+      for (const assignee in groupedTasks) {
+        groupedTasks[assignee].forEach(async (task) => {
+          const taskElement = createTaskElement(task);
+    
+          const column = document.getElementById(`${statusDict[task.fields.status]}-column`);
+          console.log(statusDict[task.fields.status]);
+          column.appendChild(taskElement);
+        });
+      }
+      return;
+      // Arrange tasks by assignee
+      const workspaceBoardAssignee = document.getElementById('workspace-board-assignee');
+      for (const assignee in groupedTasks) {
+        const assigneeColumn = createAssigneeColumn(assignee);
+        workspaceBoardAssignee.appendChild(assigneeColumn);
+    
+        groupedTasks[assignee].forEach((task) => {
+          const taskElement = createTaskElement(task);
+    
+          const column = assigneeColumn.querySelector(`[data-assignee="${assignee}"]`);
+          column.appendChild(taskElement);
+        });
+      }
+    });
+    
   }
         
 
