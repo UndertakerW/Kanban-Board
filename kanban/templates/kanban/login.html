@@ -25,11 +25,11 @@
                     <button type="submit" class="button-large-main-purple width-max spaced-button">Login</button>
                 </form>
 
-                <a href="{% url 'social:begin' 'google-oauth2' %}" class="button-secondary-l spaced-button"id="google_oauth_link">
-                    <button class="button-secondary-l spaced-button">
-                    <img class="login-icon-google" src="{% static 'kanban/imgs/icon-google.png'%}" >
-                    <span>Login with Google</span>
-                </button>
+                <a href="{% url 'social:begin' 'google-oauth2' %}" id="google_oauth_link">
+                    <button class="button-secondary-l spaced-button oauth_button">
+                        <img class="login-icon-google" src="{% static 'kanban/imgs/icon-google.png'%}" >
+                        <span>Login with Google</span>
+                    </button>
                 </a>
                 <a href="{% url 'register' %}" class="spaced-button" id="id_register_link">Register</a>
             </div>
