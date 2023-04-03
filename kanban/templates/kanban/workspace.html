@@ -62,14 +62,14 @@
                             
                                 <div class="sidebar-board-option sidebar-board-option-active heading-m"> 
                                     <img src="{% static 'kanban/imgs/icon-board-white.svg' %}">
-                                    {{ ws.name }}
+                                    <span class="sidebar-board-option-text"> {{ ws.name }} </span>
                                 </div>
                             </a>
                             
                             {% else %}
                                 <div class="sidebar-board-option sidebar-board-option-inactive heading-m"> 
                                     <img src="{% static 'kanban/imgs/icon-board.svg' %}">
-                                    {{ ws.name }}
+                                    <span class="sidebar-board-option-text"> {{ ws.name }}</span>
                                 </div>
                             {% endif %}
                         </a>

@@ -27,8 +27,15 @@
     justify-content: left;
 }
 
+#workspace-heading {
+    max-width: 60vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .workspace-header-options {
-    min-width: calc(20vw);
+    min-width: calc(30vw);
     display: flex;
     align-items: center;
     justify-content: end;
@@ -118,6 +125,14 @@
 
 .sidebar-board-option img {
     padding-right: 16px;
+}
+
+.sidebar-board-option-text {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 5px;
 }
 
 /* the workspace/board area */
