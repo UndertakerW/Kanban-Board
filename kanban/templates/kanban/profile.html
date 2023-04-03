@@ -55,15 +55,27 @@
         </div>
         <div class="profile-content-wrapper">
             <div class="profile-content">
-                <h1 class="heading-xxl"> Profile of {{full_name}} </h2>
+                <h1 class="heading-xxl"> Profile of {{username}} </h1>
+
+                <div id = "id_profile_picture">
+                    {% if not profile.picture %}
+                        <img id = "id_user_picture" src="{% static 'kanban/default.jpg' %}">
+                    {% else %}
+                        <img id = "id_user_picture" src="{% url 'photo' profile.user.id %}">
+                    {% endif %}
+                </div>
+
                 <form class="profile-form" action="{% url 'edit-user-profile' %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <label class="heading-l" for="id_profile_description">
-                        Profile description:
-                    </label>
-                    <textarea disabled id="id_profile_description">
+
+                    <div class="heading-l">Profile description:</div>
+                    <div id = "id_profile_description">
                         {{ profile_form.profile_description }}
-                    </textarea>
+                    </div>
+
+                    {{ profile_form.picture }}
+
+                     <button id = "id_update_profile_button" type = "submit" name = "id_update_profile_button">Update</button>
                 </form>
                 
                 <button 

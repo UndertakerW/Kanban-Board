@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, Http404
 
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm, OTPForm
 from kanban.models import Profile, Workspace, Task
@@ -93,9 +94,13 @@ def home_action(request):
 
     profile = get_object_or_404(Profile, user=user)
     workspaces = Workspace.objects.filter(participants=user)
+    print("user id is:")
+    print(profile.user.id)
 
-    context['profile_form'] = profile
+    context['profile'] = profile
+    context['profile_form'] = ProfileForm(initial={'profile_description': profile.profile_description})
     context['workspaces'] = workspaces
+
     return render(request, 'kanban/profile.html', context)
 
 
@@ -329,16 +334,40 @@ def edit_user_profile(request):
     context = compute_context(request)
     user = request.user
 
+
     profile = get_object_or_404(Profile, user=user)
     workspaces = Workspace.objects.filter(participants=user)
+    print("user id is:")
+    print(profile.user.id)
 
     if request.method == 'GET':
-        context['profile_form'] = profile
+        context['profile'] = profile
+        context['profile_form'] = ProfileForm(initial={'profile_description': profile.profile_description})
         context['workspaces'] = workspaces
         return render(request, 'kanban/profile.html', context)
 
-    profile_form = ProfileForm(request.POST)
-    profile_form.save()
-    context['profile_form'] = profile
+    profile_form = ProfileForm(request.POST, request.FILES)
+    if not profile_form.is_valid():
+        context = {'profile_form': profile}
+        return render(request, 'kanban/profile.html', context)
+
+    profile.picture = profile_form.cleaned_data['picture']
+    profile.content_type = profile_form.cleaned_data['picture'].content_type
+    print(profile.content_type)
+    profile.profile_description = profile_form.cleaned_data['profile_description']
+
+    profile.save()
+
+    context['profile'] = profile
+    context['profile_form'] = ProfileForm(initial={'picture': profile.picture, 'profile_description': profile.profile_description})
 
     return render(request, 'kanban/profile.html', context)
+
+@login_required
+def get_user_photo(request, id):
+    item = get_object_or_404(Profile, user=id)
+
+    if not item.picture:
+        raise Http404
+
+    return HttpResponse(item.picture, content_type=item.content_type)
