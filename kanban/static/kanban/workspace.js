@@ -63,12 +63,12 @@ function compareTasks(a, b, sortBy) {
 function groupAndSortTasks(tasks, sortBy) {
     const groupedTasks = {};
     tasks.forEach((task) => {
-      const assignee = task.fields.assignee || 'Unassigned';
+      const assignee_name = task.fields.assignee_name || 'Unassigned';
   
-      if (!groupedTasks[assignee]) {
-        groupedTasks[assignee] = [];
+      if (!groupedTasks[assignee_name]) {
+        groupedTasks[assignee_name] = [];
       }
-      groupedTasks[assignee].push(task);
+      groupedTasks[assignee_name].push(task);
     });
 
     Object.values(groupedTasks).forEach((taskGroup) => {
@@ -99,7 +99,7 @@ function createAssigneeColumn(assignee) {
 
 
   // Function to create a status column
-function createStatusColumn(status) {
+  function createStatusColumn(status) {
     const columnWrapper = document.createElement('div');
     columnWrapper.className = 'column-wrapper';
   
@@ -140,37 +140,84 @@ function createStatusColumn(status) {
   // Function to arrange tasks by status and assignee
   function arrangeTasks(tasks, sortBy) {
     processTasks(tasks).then((processedTasks) => {
-      const groupedTasks = groupAndSortTasks(processedTasks, sortBy);
-      console.log("sorted tasks:");
+      var groupedTasks = groupAndSortTasks(processedTasks, sortBy);
+      // TEST DATA, comment if necessary
+      groupedTasks = {
+        "Minhui Xie": [
+            {
+                "model": "kanban.task",
+                "pk": 1,
+                "fields": {
+                    "workspace": 1,
+                    "taskname": "My new task",
+                    "description": "This is a new task",
+                    "assignee": 2,
+                    "creation_date": "2023-04-03",
+                    "due_date": "2022-04-30",
+                    "status": 1,
+                    "sprint": 1,
+                    "priority": 1,
+                    "assignee_name": "Minhui Xie"
+                }
+              }
+            ],
+            "default": [
+              {
+                  "model": "kanban.task",
+                  "pk": 1,
+                  "fields": {
+                      "workspace": 1,
+                      "taskname": "Another new task",
+                      "description": "This is a new task",
+                      "assignee": 1,
+                      "creation_date": "2023-04-03",
+                      "due_date": "2022-04-30",
+                      "status": 1,
+                      "sprint": 2,
+                      "priority": 2,
+                      "assignee_name": "default"
+                  }
+                }
+              ],
+          }
+      console.log("groued and sorted tasks:");
       console.log(groupedTasks);
-      // Create the status columns and append them to the columns div
+
+      // Create collapsibles that conatains grouped tasks
       const columnsDiv = document.getElementById('columns-div');
-      const statusColumns = statusList.map(createStatusColumn);
-      statusColumns.forEach(column => columnsDiv.appendChild(column));
-    
-      // Arrange tasks by status
-      for (const assignee in groupedTasks) {
-        groupedTasks[assignee].forEach(async (task) => {
+      var count = 0;
+      for (const name in groupedTasks) {
+        // create the bootstrap collapsible <a> element
+        const aElement = document.createElement("a");
+        aElement.classList.add("btn", "collapsed", "bg-primary-subtle");
+        aElement.setAttribute("data-bs-toggle", "collapse");
+        aElement.setAttribute("href", `#collapse-body-${count}`);
+        aElement.setAttribute("role", "button");
+        aElement.setAttribute("aria-expanded", "false");
+        aElement.setAttribute("aria-controls", "collapseExample");
+        aElement.textContent = name;
+
+        // create the <div> element with class "collapse"
+        const divCollapse = document.createElement("div");
+        divCollapse.classList.add("collapse", "show");
+        divCollapse.setAttribute("id", `collapse-body-${count}`);
+
+        // append the <a> element and the <div> element with class "collapse" to task board
+        columnsDiv.appendChild(aElement);
+        columnsDiv.appendChild(divCollapse);
+
+        // Create the status columns and append them to the columns div
+        const statusColumns = statusList.map(createStatusColumn);
+        const collapsibleBody = document.getElementById(`collapse-body-${count}`);
+        statusColumns.forEach(column => collapsibleBody.appendChild(column));
+
+        // Arrange tasks by status (TODO, DOING & DONE) within collapsible groups
+        groupedTasks[name].forEach(async (task) => {
           const taskElement = createTaskElement(task);
-    
-          const column = document.getElementById(`${statusDict[task.fields.status]}-column`);
-          console.log(statusDict[task.fields.status]);
+          const column = collapsibleBody.querySelector(`#${statusDict[task.fields.status]}-column`);
           column.appendChild(taskElement);
         });
-      }
-      return;
-      // Arrange tasks by assignee
-      const workspaceBoardAssignee = document.getElementById('workspace-board-assignee');
-      for (const assignee in groupedTasks) {
-        const assigneeColumn = createAssigneeColumn(assignee);
-        workspaceBoardAssignee.appendChild(assigneeColumn);
-    
-        groupedTasks[assignee].forEach((task) => {
-          const taskElement = createTaskElement(task);
-    
-          const column = assigneeColumn.querySelector(`[data-assignee="${assignee}"]`);
-          column.appendChild(taskElement);
-        });
+        count++;
       }
     });
     
