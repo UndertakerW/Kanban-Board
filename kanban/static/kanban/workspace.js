@@ -189,7 +189,7 @@ function createAssigneeColumn(assignee) {
       for (const name in groupedTasks) {
         // create the bootstrap collapsible <a> element
         const aElement = document.createElement("a");
-        aElement.classList.add("btn", "collapsed", "bg-primary-subtle");
+        aElement.classList.add("btn", "collapsed", "bg-primary-subtle", "workspace-collapsible-button");
         aElement.setAttribute("data-bs-toggle", "collapse");
         aElement.setAttribute("href", `#collapse-body-${count}`);
         aElement.setAttribute("role", "button");
@@ -199,7 +199,7 @@ function createAssigneeColumn(assignee) {
 
         // create the <div> element with class "collapse"
         const divCollapse = document.createElement("div");
-        divCollapse.classList.add("collapse", "show");
+        divCollapse.classList.add("collapse", "show", "grouped-columns-wrapper");
         divCollapse.setAttribute("id", `collapse-body-${count}`);
 
         // append the <a> element and the <div> element with class "collapse" to task board

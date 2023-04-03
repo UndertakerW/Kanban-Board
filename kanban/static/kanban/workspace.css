@@ -140,14 +140,12 @@
     width: calc(100vw - 300px);
     height: calc(100vh - 98px);
     padding: 24px;
-    background-color:  var(--cold-white);
+    background-color: var(--cold-white);
 
     overflow: scroll;
     position: absolute;
     right: 0;
     bottom: 0;
-
-    display: flex;
 }
 
 .column {
@@ -155,6 +153,11 @@
     margin-top: 24px;
     margin-right: 24px;
     height: 200px;
+}
+
+.grouped-columns-wrapper {
+    display: flex;
+    width: calc(100vw - 400px);
 }
 
 .task-wrapper {
@@ -214,6 +217,11 @@
     line-height: 19px;
     letter-spacing: 0px;
     color: var(--shade-4-gray);
+}
+
+.workspace-collapsible-button {
+    display: block;
+    width: calc();
 }
 
 
