@@ -17,11 +17,16 @@ from kanban.models import Profile, Workspace, Task
 # Return:           A wrapped function
 def _status_check(action_function):
     def my_wrapper_function(request, *args, **kwargs):
-        print('====== user is: ')
-        print(Profile.objects.all()[0].user)
-        print(request.user)
+        # print('====== user is: ')
+        # print(Profile.objects.all()[0].user)
+        # print(request.user)
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except:
+            new_profile = Profile(user=request.user, authentication_status=True, register_type='google')
+            new_profile.save()
 
-        profile = Profile.objects.get(user=request.user)
+        # profile = Profile.objects.get(user=request.user)
         if not profile.authentication_status:
             return render(request, 'kanban/otp.html')
         return action_function(request, *args, **kwargs)
@@ -334,7 +339,6 @@ def edit_user_profile(request):
     context = compute_context(request)
     user = request.user
 
-
     profile = get_object_or_404(Profile, user=user)
     workspaces = Workspace.objects.filter(participants=user)
     print("user id is:")
@@ -359,9 +363,11 @@ def edit_user_profile(request):
     profile.save()
 
     context['profile'] = profile
-    context['profile_form'] = ProfileForm(initial={'picture': profile.picture, 'profile_description': profile.profile_description})
+    context['profile_form'] = ProfileForm(
+        initial={'picture': profile.picture, 'profile_description': profile.profile_description})
 
     return render(request, 'kanban/profile.html', context)
+
 
 @login_required
 def get_user_photo(request, id):
