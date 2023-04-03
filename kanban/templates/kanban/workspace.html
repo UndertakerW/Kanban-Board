@@ -54,7 +54,7 @@
         </div>
         <div class="sidebar-wrapper">
             <div class="sidebar-collapse-wrapper">
-                <div class="heading-s sidebar-heading">ALL BOARDS (1)</div>
+                <div class="heading-s sidebar-heading">ALL BOARDS ({{workspaces.count}})</div>
                 <div class="sidebar-boards">
                     {% for ws in workspaces %}
                         <a class="link-no-underline" href="/workspace/{{ws.id}}">
