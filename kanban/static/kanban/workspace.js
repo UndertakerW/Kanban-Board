@@ -1,3 +1,6 @@
+const statusList = ['TODO', 'DOING', 'DONE'];
+const statusDict = {1 : 'TODO', 2 : 'DOING', 3 : 'DONE'};
+
 // Function to create a task element
 function createTaskElement(task) {
     const taskWrapper = document.createElement('div');
@@ -5,7 +8,7 @@ function createTaskElement(task) {
 
     const taskTitle = document.createElement('h4');
     taskTitle.className = 'heading-m task-title';
-    taskTitle.textContent = task.title;
+    taskTitle.textContent = task.fields.taskname;
 
     taskWrapper.appendChild(taskTitle);
 
@@ -67,21 +70,47 @@ function createAssigneeColumn(assignee) {
   
     return columnWrapper;
   }
+
+
+  // Function to create a status column
+function createStatusColumn(status) {
+    const columnWrapper = document.createElement('div');
+    columnWrapper.className = 'column-wrapper';
+  
+    const columnHeader = document.createElement('div');
+    columnHeader.className = 'column-header heading-s';
+    columnHeader.textContent = status.toUpperCase();
+  
+    const column = document.createElement('div');
+    column.className = 'column';
+    column.id = `${status}-column`;
+  
+    columnWrapper.appendChild(columnHeader);
+    columnWrapper.appendChild(column);
+  
+    return columnWrapper;
+  }
   
   // Function to arrange tasks by status and assignee
   function arrangeTasks(tasks, sortBy) {
     const groupedTasks = groupAndSortTasks(tasks, sortBy);
+  
+    // Create the status columns and append them to the columns div
+    const columnsDiv = document.getElementById('columns-div');
+    const statusColumns = statusList.map(createStatusColumn);
+    statusColumns.forEach(column => columnsDiv.appendChild(column));
   
     // Arrange tasks by status
     for (const assignee in groupedTasks) {
       groupedTasks[assignee].forEach((task) => {
         const taskElement = createTaskElement(task);
   
-        const column = document.getElementById(`${task.status.toLowerCase()}-column`);
+        const column = document.getElementById(`${statusDict[task.fields.status]}-column`);
+        console.log(statusDict[task.fields.status]);
         column.appendChild(taskElement);
       });
     }
-  
+    return;
     // Arrange tasks by assignee
     const workspaceBoardAssignee = document.getElementById('workspace-board-assignee');
     for (const assignee in groupedTasks) {
@@ -96,6 +125,8 @@ function createAssigneeColumn(assignee) {
       });
     }
   }
+        
+
   
   // Function to toggle between the two sets of columns
   function toggleColumns() {
@@ -108,7 +139,9 @@ function createAssigneeColumn(assignee) {
   
   // Call the arrangeTasks function and toggle button event listener when the page is loaded
   document.addEventListener('DOMContentLoaded', function () {
-    const tasks = JSON.parse(document.getElementById('tasks-data').textContent);
+    const tasksJSON = document.getElementById('workspace-js').textContent;
+    const tasks = JSON.parse(tasksJSON);
+    console.log(tasks);
   
     // Change the sortBy value to the user-specified sorting option
     const sortBy = 'priority'; // Example: sort tasks by priority
@@ -117,5 +150,5 @@ function createAssigneeColumn(assignee) {
   
     // Add event listener to the toggle button
     const toggleColumnsButton = document.getElementById('toggle-columns');
-    toggleColumnsButton.addEventListener('click', toggleColumns);
+    // toggleColumnsButton.addEventListener('click', toggleColumns);
   });
