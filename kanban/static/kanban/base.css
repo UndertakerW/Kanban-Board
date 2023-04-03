@@ -14,6 +14,11 @@ body {
     --error-red: #EA5555;
     --disabled-error-red: #FF9898;
 
+    /* new colors for task priorty levels */
+    --task-low:  #4CAF50;
+    --task-medium: #e2ac08;
+    --task-high: #F44336;
+
 
     font-family: Plus Jakarta Sans !important;
     font-weight: 700;

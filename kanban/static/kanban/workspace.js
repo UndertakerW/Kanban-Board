@@ -1,19 +1,47 @@
 const statusList = ['TODO', 'DOING', 'DONE'];
 const statusDict = {1 : 'TODO', 2 : 'DOING', 3 : 'DONE'};
+const priority_levels = ['low', 'medium', 'high'];
 
 // Function to create a task element
 function createTaskElement(task) {
-    const taskWrapper = document.createElement('div');
-    taskWrapper.className = 'task-wrapper';
+  const taskWrapper = document.createElement('div');
+  taskWrapper.className = 'task-wrapper';
 
-    const taskTitle = document.createElement('h4');
-    taskTitle.className = 'heading-m task-title';
-    taskTitle.textContent = task.fields.taskname;
+  const taskTitle = document.createElement('h4');
+  taskTitle.className = 'heading-m task-title';
+  taskTitle.textContent = task.fields.taskname;
 
-    taskWrapper.appendChild(taskTitle);
+  const taskInfo = document.createElement('div');
+  taskInfo.className = 'task-info';
 
-    return taskWrapper;
+  const taskSprintTag = document.createElement('div');
+  taskSprintTag.className = 'task-tag';
+  taskSprintTag.textContent = 'Sprint ' + task.fields.sprint;
+
+  const taskPriorityTag = document.createElement('div');
+  taskPriorityTag.className = 'task-tag';
+  taskPriorityTag.textContent = 'Priority: ';
+
+  const taskPriorityValue = document.createElement('div');
+  taskPriorityValue.className = 'task-priority-' + priority_levels[task.fields.priority];
+  taskPriorityValue.textContent = priority_levels[task.fields.priority];
+
+  taskPriorityTag.appendChild(taskPriorityValue);
+
+  const taskAssignee = document.createElement('div');
+  taskAssignee.className = 'task-assignee';
+  taskAssignee.textContent = document.getElementById('username-js').textContent;
+
+  taskInfo.appendChild(taskSprintTag);
+  taskInfo.appendChild(taskPriorityTag);
+  taskInfo.appendChild(taskAssignee);
+
+  taskWrapper.appendChild(taskTitle);
+  taskWrapper.appendChild(taskInfo);
+
+  return taskWrapper;
 }
+
 
 // Function to compare tasks for sorting
 function compareTasks(a, b, sortBy) {
