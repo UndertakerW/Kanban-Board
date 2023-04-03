@@ -16,7 +16,7 @@
         <title> {% block title %} Kanban Project Management System {% endblock %} </title>
         <!-- Include the workspace.js file -->
         {% load static %}
-        <script src="{% static 'workspace.js' %}"></script>
+        <script src="{% static 'kanban/workspace.js' %}"></script>
         <!-- Pass the tasks data to JavaScript -->
         <script id="workspace-js" type="application/json">{{ tasks|safe }}</script>
 	</head>
@@ -83,43 +83,8 @@
                 </div>
             </div>
         </div>
-        <div class="workspace-board">
-            <div class="column-wrapper">
-                <div class="column-header heading-s">TODO</div>
-                <div class="column">
-                    <div class="task-wrapper">
-                        <h4 class="heading-m task-title"> Build UI for onboarding flow </h4>
-                    </div>
-                    <div class="task-wrapper">
-                        <h4 class="heading-m task-title"> Build UI for search </h4>
-                    </div>
-                    <div class="task-wrapper">
-                        <h4 class="heading-m task-title"> Create template structures </h4>
-                    </div>
-                </div>
-            </div>
-            <div class="column-wrapper">
-                <div class="column-header heading-s">DOING</div>
-                <div class="column">
-                    <div class="task-wrapper">
-                        <h4 class="heading-m task-title"> Design setting and search pages </h4>
-                    </div>
-                    <div class="task-wrapper">
-                        <h4 class="heading-m task-title"> Add account management endpoints </h4>
-                    </div>
-                </div>
-            </div>
-            <div class="column-wrapper">
-                <div class="column-header heading-s">DONE</div>
-                <div class="column">
-                    <div class="task-wrapper">
-                        <h4 class="heading-m task-title"> Create wireframe prototype </h4>
-                    </div>
-                    <div class="task-wrapper">
-                        <h4 class="heading-m task-title"> Market discovery </h4>
-                    </div>
-                </div>
-            </div>
+        <div class="workspace-board" id="columns-div">
+
         </div>
 
         <!-- Workspace Creation Modal -->
