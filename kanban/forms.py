@@ -112,6 +112,13 @@ class RegisterForm(forms.Form):
 
 
 class NewWorkspaceForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['participants'].queryset = User.objects.exclude(id=user.id)
+
     participants = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
         widget=forms.CheckboxSelectMultiple(

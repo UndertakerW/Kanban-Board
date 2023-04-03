@@ -20,14 +20,27 @@
     align-items: center;
 }
 
+.workspace-header-name {
+    min-width: calc(20vw);
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
 .workspace-header-options {
-    min-width: calc(100vw - 606.38px);
+    min-width: calc(20vw);
     display: flex;
     align-items: center;
     justify-content: end;
 }
 
 .add-task-btn {
+    margin: 0 24px;
+    color: white;
+}
+
+.edit-workspace-btn {
+    width: auto;
     margin: 0 24px;
     color: white;
 }
@@ -151,6 +164,12 @@
 }
 
 .modal-workspace-creation-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-workspace-edit-form {
     height: 100%;
     display: flex;
     flex-direction: column;
