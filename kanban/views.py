@@ -17,10 +17,28 @@ from kanban.models import Profile, Workspace, Task
 def _status_check(action_function):
     def my_wrapper_function(request, *args, **kwargs):
         print('====== user is: ')
-        print(Profile.objects.all()[0].user)
+        # print(Profile.objects.all()[0].user)
         print(request.user)
-        
-        profile = Profile.objects.get(user=request.user)
+        # if Profile.objects.get(user=request.user) == null:
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except:
+            new_user = User.objects.create_user(username=['username'],
+                                                password=form.cleaned_data['password1'],
+                                                email=form.cleaned_data['email'],
+                                                first_name=form.cleaned_data['first_name'],
+                                                last_name=form.cleaned_data['last_name'])
+            new_user.save()
+
+            new_user = authenticate(username=form.cleaned_data['username'],
+                                    password=form.cleaned_data['password1'])
+
+            profile = Profile()
+            profile.user = new_user
+            profile.otp = 111
+            # random.randint(1000, 9999)
+
+            profile.save()
         if not profile.authentication_status:
             return render(request, 'kanban/otp.html')
         return action_function(request, *args, **kwargs)
@@ -182,7 +200,6 @@ def register_action(request):
     return redirect(reverse('otp_verify'))
 
 
-
 # Function name:    create_workspace_action
 # url:              /create-workspace
 # Usage:            Deal with the create workspace action.
@@ -191,7 +208,6 @@ def register_action(request):
 @login_required
 @_status_check
 def create_workspace_action(request):
-
     context = compute_context(request)
 
     if request.method == 'GET':
@@ -203,7 +219,7 @@ def create_workspace_action(request):
     workspace.creator = request.user
 
     new_workspace_form = NewWorkspaceForm(request.POST, instance=workspace)
-    #print(request.POST['name'])
+    # print(request.POST['name'])
 
     # TODO: should clarify where the create action happens. If it happens
     # on the profile page, then it should return profile page.
@@ -218,6 +234,7 @@ def create_workspace_action(request):
     context['task_form'] = TaskForm()
     return redirect('workspace/{}'.format(workspace.id))
 
+
 # Function name:    workspace_action
 # url:              /workspace
 # Usage:            Render workspace screen on visit
@@ -229,11 +246,16 @@ def workspace_action(request, selected_workspace_id):
     # Currently its visiting the workspace anyways
     if request.method == 'GET':
         workspaces = Workspace.objects.filter(participants=request.user)
+
+        # print("--------creator is " + workspaces.creator)
+        # print("--------participants is " + workspaces.participants.all())
+        # if request.user == workspaces.creator or request.user in workspaces.participants.all():
+
         selected_workspace = get_object_or_404(Workspace, id=selected_workspace_id)
         context = compute_context(request)
         context['selected_workspace'] = selected_workspace
-
         return render(request, 'kanban/workspace.html', context)
+
 
 # Function name:    edit_workspace_action
 # url:              /workspace/:id/edit
@@ -249,7 +271,7 @@ def edit_workspace_action(request, workspace_id):
     compute_edit_workspace_context(request, context, workspace)
 
     # Just display the workspace form if this is a GET request.
-    if request.method == 'GET':
+    if request.method == 'GET' or request.user != workspace.creator:
         return render(request, 'kanban/edit_workspace.html', context)
 
     if request.method == 'POST':
