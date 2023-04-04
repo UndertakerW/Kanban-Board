@@ -1,6 +1,6 @@
 const statusList = ['TODO', 'DOING', 'DONE'];
 const statusDict = {1 : 'TODO', 2 : 'DOING', 3 : 'DONE'};
-const priority_levels = ['low', 'medium', 'high'];
+const priority_levels = ['Low', 'Medium', 'High'];
 
 // Function to create a task element
 function createTaskElement(task) {
@@ -23,8 +23,8 @@ function createTaskElement(task) {
     taskPriorityTag.textContent = 'Priority: ';
 
     const taskPriorityValue = document.createElement('div');
-    taskPriorityValue.className = 'task-priority-' + priority_levels[task.fields.priority];
-    taskPriorityValue.textContent = priority_levels[task.fields.priority]
+    taskPriorityValue.className = 'task-priority-' + priority_levels[task.fields.priority - 1].toLowerCase();
+    taskPriorityValue.textContent = priority_levels[task.fields.priority - 1]
 
     taskPriorityTag.appendChild(taskPriorityValue);
 
@@ -156,7 +156,7 @@ function createAssigneeColumn(assignee) {
       //               "due_date": "2022-04-30",
       //               "status": 1,
       //               "sprint": 1,
-      //               "priority": 1,
+      //               "priority": 2,
       //               "assignee_name": "Minhui Xie"
       //           }
       //         }
@@ -174,7 +174,7 @@ function createAssigneeColumn(assignee) {
       //                 "due_date": "2022-04-30",
       //                 "status": 1,
       //                 "sprint": 2,
-      //                 "priority": 2,
+      //                 "priority": 3,
       //                 "assignee_name": "default"
       //             }
       //           }
