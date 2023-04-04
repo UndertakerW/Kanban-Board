@@ -26,7 +26,7 @@ def _status_check(action_function):
             new_profile = Profile(user=request.user, authentication_status=True, register_type='google')
             new_profile.save()
 
-        # profile = Profile.objects.get(user=request.user)
+        profile = Profile.objects.get(user=request.user)
         if not profile.authentication_status:
             return render(request, 'kanban/otp.html')
         return action_function(request, *args, **kwargs)
