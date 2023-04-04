@@ -174,8 +174,13 @@ class TaskForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_description']
+        fields = ('profile_description', 'picture')
 
-        widgets = {
-            'profile_description': forms.TextInput(attrs={'id': 'id_profile_description_text'})
-        }
+        def clean_picture(self):
+            picture = self.cleaned_data['picture']
+            if not picture or not hasattr(picture, 'content_type'):
+                raise forms.ValidationError('You must upload a picture')
+            if not picture.content_type or not picture.content_type.startswith('image'):
+                raise forms.ValidationError('File type is not image')
+
+            return picture

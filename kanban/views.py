@@ -5,9 +5,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+
 from django.core import serializers
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, Http404
+
 
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm, OTPForm
 from kanban.models import Profile, Workspace, Task
@@ -22,7 +24,13 @@ def _status_check(action_function):
         # print('====== user is: ')
         # print(Profile.objects.all()[0].user)
         # print(request.user)
-        
+
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except:
+            new_profile = Profile(user=request.user, authentication_status=True, register_type='google')
+            new_profile.save()
+
         profile = Profile.objects.get(user=request.user)
         if not profile.authentication_status:
             return render(request, 'kanban/otp.html')
@@ -108,9 +116,13 @@ def home_action(request):
 
     profile = get_object_or_404(Profile, user=user)
     workspaces = Workspace.objects.filter(participants=user)
+    print("user id is:")
+    print(profile.user.id)
 
-    context['profile_form'] = profile
+    context['profile'] = profile
+    context['profile_form'] = ProfileForm(initial={'profile_description': profile.profile_description})
     context['workspaces'] = workspaces
+
     return render(request, 'kanban/profile.html', context)
 
 
@@ -197,7 +209,6 @@ def register_action(request):
     return redirect(reverse('otp_verify'))
 
 
-
 # Function name:    create_workspace_action
 # url:              /create-workspace
 # Usage:            Deal with the create workspace action.
@@ -206,7 +217,6 @@ def register_action(request):
 @login_required
 @_status_check
 def create_workspace_action(request):
-
     context = compute_context(request)
 
     if request.method == 'GET':
@@ -218,7 +228,7 @@ def create_workspace_action(request):
     workspace.creator = request.user
 
     new_workspace_form = NewWorkspaceForm(request.POST, instance=workspace)
-    #print(request.POST['name'])
+    # print(request.POST['name'])
 
     # TODO: should clarify where the create action happens. If it happens
     # on the profile page, then it should return profile page.
@@ -226,7 +236,7 @@ def create_workspace_action(request):
         context['form'] = new_workspace_form
         context['task_form'] = TaskForm()
         return render(request, 'kanban/workspace.html', context)
-    
+
     new_workspace_form.save()
     # Add the current user to participants
     workspace.participants.add(request.user.id)
@@ -234,6 +244,7 @@ def create_workspace_action(request):
     context['selected_workspace'] = new_workspace_form.cleaned_data['name']
     context['task_form'] = TaskForm()
     return redirect('workspace/{}'.format(workspace.id))
+
 
 # Function name:    workspace_action
 # url:              /workspace
@@ -260,6 +271,7 @@ def workspace_action(request, selected_workspace_id):
 
     return render(request, 'kanban/workspace.html', context)
 
+
 # Function name:    edit_workspace_action
 # url:              /workspace/:id/edit
 # Usage:            Deal with the edit workspace action.
@@ -277,7 +289,7 @@ def edit_workspace_action(request, selected_workspace_id):
     if request.method == 'GET':
         return redirect(reverse('workspace', args=[selected_workspace_id]))
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user == workspace.creator:
         edit_form = NewWorkspaceForm(request.POST, request.FILES, instance=workspace)
         if not edit_form.is_valid():
             context['edit_form'] = edit_form
@@ -369,14 +381,39 @@ def edit_user_profile(request):
 
     profile = get_object_or_404(Profile, user=user)
     workspaces = Workspace.objects.filter(participants=user)
+    print("user id is:")
+    print(profile.user.id)
 
     if request.method == 'GET':
-        context['profile_form'] = profile
+        context['profile'] = profile
+        context['profile_form'] = ProfileForm(initial={'profile_description': profile.profile_description})
         context['workspaces'] = workspaces
         return render(request, 'kanban/profile.html', context)
 
-    profile_form = ProfileForm(request.POST)
-    profile_form.save()
-    context['profile_form'] = profile
+    profile_form = ProfileForm(request.POST, request.FILES)
+    if not profile_form.is_valid():
+        context = {'profile_form': profile}
+        return render(request, 'kanban/profile.html', context)
+
+    profile.picture = profile_form.cleaned_data['picture']
+    profile.content_type = profile_form.cleaned_data['picture'].content_type
+    print(profile.content_type)
+    profile.profile_description = profile_form.cleaned_data['profile_description']
+
+    profile.save()
+
+    context['profile'] = profile
+    context['profile_form'] = ProfileForm(
+        initial={'picture': profile.picture, 'profile_description': profile.profile_description})
 
     return render(request, 'kanban/profile.html', context)
+
+
+@login_required
+def get_user_photo(request, id):
+    item = get_object_or_404(Profile, user=id)
+
+    if not item.picture:
+        raise Http404
+
+    return HttpResponse(item.picture, content_type=item.content_type)

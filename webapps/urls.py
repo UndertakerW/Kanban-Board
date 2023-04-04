@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from kanban import views
 
 urlpatterns = [
     path('', views.home_action, name='home'),
+    path('oauth/', include('social_django.urls', namespace='social')),
     path('login', views.login_action, name='login'),
     path('logout', views.logout_action, name='logout'),
     path('register', views.register_action, name='register'),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('workspace/<int:selected_workspace_id>/task/create/', views.create_task_action, name='create-task'),
     path('workspace/<int:selected_workspace_id>/task/edit/<int:task_id>', views.edit_task_action, name='edit-task'),
     path('edit-user-profile', views.edit_user_profile, name='edit-user-profile'),
-    path('otp_verify', views.otp_verify, name="otp_verify"),
     path('get-username/<int:user_id>', views.get_username, name="get-username")
+    path('photo/<int:id>', views.get_user_photo, name='photo'),
+    path('otp_verify', views.otp_verify, name="otp_verify"),
 ]

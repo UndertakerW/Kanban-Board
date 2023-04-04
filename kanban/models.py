@@ -15,6 +15,8 @@ class Profile(models.Model):
     otp = models.CharField(max_length=30, default=0)
     authentication_status = models.BooleanField(default=False)
     profile_description = models.TextField(max_length=50, null=True)
+    picture = models.FileField(blank=True, null=True)
+    content_type = models.CharField(max_length=50, default='image/jpg')
 
 
 # Model name:               Workspace
