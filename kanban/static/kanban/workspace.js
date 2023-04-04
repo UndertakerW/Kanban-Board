@@ -141,45 +141,45 @@ function createAssigneeColumn(assignee) {
   function arrangeTasks(tasks, sortBy) {
     processTasks(tasks).then((processedTasks) => {
       var groupedTasks = groupAndSortTasks(processedTasks, sortBy);
-      // TEST DATA, comment if necessary
-      groupedTasks = {
-        "Minhui Xie": [
-            {
-                "model": "kanban.task",
-                "pk": 1,
-                "fields": {
-                    "workspace": 1,
-                    "taskname": "My new task",
-                    "description": "This is a new task",
-                    "assignee": 2,
-                    "creation_date": "2023-04-03",
-                    "due_date": "2022-04-30",
-                    "status": 1,
-                    "sprint": 1,
-                    "priority": 1,
-                    "assignee_name": "Minhui Xie"
-                }
-              }
-            ],
-            "default": [
-              {
-                  "model": "kanban.task",
-                  "pk": 1,
-                  "fields": {
-                      "workspace": 1,
-                      "taskname": "Another new task",
-                      "description": "This is a new task",
-                      "assignee": 1,
-                      "creation_date": "2023-04-03",
-                      "due_date": "2022-04-30",
-                      "status": 1,
-                      "sprint": 2,
-                      "priority": 2,
-                      "assignee_name": "default"
-                  }
-                }
-              ],
-          }
+      // [IMPORTANT] TEST DATA, comment if necessary
+      // groupedTasks = {
+      //   "Minhui Xie": [
+      //       {
+      //           "model": "kanban.task",
+      //           "pk": 1,
+      //           "fields": {
+      //               "workspace": 1,
+      //               "taskname": "My new task",
+      //               "description": "This is a new task",
+      //               "assignee": 2,
+      //               "creation_date": "2023-04-03",
+      //               "due_date": "2022-04-30",
+      //               "status": 1,
+      //               "sprint": 1,
+      //               "priority": 1,
+      //               "assignee_name": "Minhui Xie"
+      //           }
+      //         }
+      //       ],
+      //       "default": [
+      //         {
+      //             "model": "kanban.task",
+      //             "pk": 1,
+      //             "fields": {
+      //                 "workspace": 1,
+      //                 "taskname": "Another new task",
+      //                 "description": "This is a new task",
+      //                 "assignee": 1,
+      //                 "creation_date": "2023-04-03",
+      //                 "due_date": "2022-04-30",
+      //                 "status": 1,
+      //                 "sprint": 2,
+      //                 "priority": 2,
+      //                 "assignee_name": "default"
+      //             }
+      //           }
+      //         ],
+      //     }
       console.log("groued and sorted tasks:");
       console.log(groupedTasks);
 
