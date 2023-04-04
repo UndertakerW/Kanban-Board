@@ -27,8 +27,15 @@
     justify-content: left;
 }
 
+#workspace-heading {
+    max-width: 60vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .workspace-header-options {
-    min-width: calc(20vw);
+    min-width: calc(30vw);
     display: flex;
     align-items: center;
     justify-content: end;
@@ -120,30 +127,41 @@
     padding-right: 16px;
 }
 
+.sidebar-board-option-text {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 5px;
+}
+
 /* the workspace/board area */
 .workspace-board {
     width: calc(100vw - 300px);
     height: calc(100vh - 98px);
     padding: 24px;
-    background-color:  var(--cold-white);
+    background-color: var(--cold-white);
 
     overflow: scroll;
     position: absolute;
     right: 0;
     bottom: 0;
-
-    display: flex;
 }
 
 .column {
-    width: 280px;
+    width: 310px;
     margin-top: 24px;
     margin-right: 24px;
     height: 200px;
 }
 
+.grouped-columns-wrapper {
+    display: flex;
+    width: calc(100vw - 400px);
+}
+
 .task-wrapper {
-    width: 280px;
+    width: 310px;
     min-height: 88px;
     background-color: white;
     box-shadow: 0px 4px 6px rgba(54, 78, 126, 0.101545);
@@ -152,9 +170,60 @@
     padding: 16px 23px;
 }
 
-.task-title {
-    margin: 20px;
+.task-info {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
+
+
+.task-tag {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    padding: 3px 7px;
+    
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 19px;
+    letter-spacing: 0px;
+
+    color: var(--shade-4-gray);
+    background-color: var(--bright-white);
+    border-radius: 15px;
+    border: solid 0.5px var(--cold-white);
+}
+
+.task-priority-low {
+    padding-left: 3px;
+    color: var(--task-low);
+}
+
+.task-priority-medium {
+    padding-left: 3px;
+    color: var(--task-medium);
+}
+
+.task-priority-high {
+    padding-left: 3px;
+    color: var(--task-high);
+}
+
+.task-assignee {
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 19px;
+    letter-spacing: 0px;
+    color: var(--shade-4-gray);
+}
+
+.workspace-collapsible-button {
+    display: block;
+    width: calc();
+}
+
 
 /* modal */
 .modal-task-creation-form {
