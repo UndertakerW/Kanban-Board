@@ -158,6 +158,7 @@
 .grouped-columns-wrapper {
     display: flex;
     width: calc(100vw - 400px);
+    padding-bottom: 20px;
 }
 
 .task-wrapper {

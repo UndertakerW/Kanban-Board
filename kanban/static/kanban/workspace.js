@@ -149,9 +149,9 @@ function createAssigneeColumn(assignee) {
       //           "pk": 1,
       //           "fields": {
       //               "workspace": 1,
-      //               "taskname": "My new task",
+      //               "taskname": "Add task to workspace",
       //               "description": "This is a new task",
-      //               "assignee": 2,
+      //               "assignee": 1,
       //               "creation_date": "2023-04-03",
       //               "due_date": "2022-04-30",
       //               "status": 1,
@@ -159,23 +159,135 @@ function createAssigneeColumn(assignee) {
       //               "priority": 2,
       //               "assignee_name": "Minhui Xie"
       //           }
-      //         }
+      //         },
+      //         {
+      //           "model": "kanban.task",
+      //           "pk": 1,
+      //           "fields": {
+      //               "workspace": 1,
+      //               "taskname": "Refine frontend design",
+      //               "description": "This is a new task",
+      //               "assignee": 1,
+      //               "creation_date": "2023-04-03",
+      //               "due_date": "2022-04-30",
+      //               "status": 1,
+      //               "sprint": 1,
+      //               "priority": 1,
+      //               "assignee_name": "Minhui Xie"
+      //           }
+      //         },
+      //         {
+      //           "model": "kanban.task",
+      //           "pk": 1,
+      //           "fields": {
+      //               "workspace": 1,
+      //               "taskname": "Arrange tasks using Bootsrtap collapse",
+      //               "description": "This is a new task",
+      //               "assignee": 1,
+      //               "creation_date": "2023-04-03",
+      //               "due_date": "2022-04-30",
+      //               "status": 2,
+      //               "sprint": 1,
+      //               "priority": 3,
+      //               "assignee_name": "Minhui Xie"
+      //           }
+      //         },
+      //         {
+      //           "model": "kanban.task",
+      //           "pk": 1,
+      //           "fields": {
+      //               "workspace": 1,
+      //               "taskname": "Create workspace interface",
+      //               "description": "This is a new task",
+      //               "assignee": 1,
+      //               "creation_date": "2023-04-03",
+      //               "due_date": "2022-04-30",
+      //               "status": 3,
+      //               "sprint": 1,
+      //               "priority": 3,
+      //               "assignee_name": "Minhui Xie"
+      //           }
+      //         },
       //       ],
-      //       "default": [
+      //       "Wei Wu": [
       //         {
       //             "model": "kanban.task",
       //             "pk": 1,
       //             "fields": {
       //                 "workspace": 1,
-      //                 "taskname": "Another new task",
+      //                 "taskname": "Use web socket to add tasks",
       //                 "description": "This is a new task",
       //                 "assignee": 1,
       //                 "creation_date": "2023-04-03",
       //                 "due_date": "2022-04-30",
       //                 "status": 1,
       //                 "sprint": 2,
+      //                 "priority": 2,
+      //                 "assignee_name": "Wei Wu"
+      //             }
+      //           },
+      //           {
+      //             "model": "kanban.task",
+      //             "pk": 1,
+      //             "fields": {
+      //                 "workspace": 1,
+      //                 "taskname": "Use web socket to modify tasks",
+      //                 "description": "This is a new task",
+      //                 "assignee": 1,
+      //                 "creation_date": "2023-04-03",
+      //                 "due_date": "2022-04-30",
+      //                 "status": 1,
+      //                 "sprint": 2,
+      //                 "priority": 2,
+      //                 "assignee_name": "Wei Wu"
+      //             }
+      //           },
+      //           {
+      //             "model": "kanban.task",
+      //             "pk": 1,
+      //             "fields": {
+      //                 "workspace": 1,
+      //                 "taskname": "Group tasks by status",
+      //                 "description": "This is a new task",
+      //                 "assignee": 1,
+      //                 "creation_date": "2023-04-03",
+      //                 "due_date": "2022-04-30",
+      //                 "status": 2,
+      //                 "sprint": 1,
+      //                 "priority": 2,
+      //                 "assignee_name": "Wei Wu"
+      //             }
+      //           },
+      //           {
+      //             "model": "kanban.task",
+      //             "pk": 1,
+      //             "fields": {
+      //                 "workspace": 1,
+      //                 "taskname": "Update task model",
+      //                 "description": "This is a new task",
+      //                 "assignee": 1,
+      //                 "creation_date": "2023-04-03",
+      //                 "due_date": "2022-04-30",
+      //                 "status": 2,
+      //                 "sprint": 1,
       //                 "priority": 3,
-      //                 "assignee_name": "default"
+      //                 "assignee_name": "Wei Wu"
+      //             }
+      //           },
+      //           {
+      //             "model": "kanban.task",
+      //             "pk": 1,
+      //             "fields": {
+      //                 "workspace": 1,
+      //                 "taskname": "Edit workspace",
+      //                 "description": "This is a new task",
+      //                 "assignee": 1,
+      //                 "creation_date": "2023-04-03",
+      //                 "due_date": "2022-04-30",
+      //                 "status": 3,
+      //                 "sprint": 1,
+      //                 "priority": 3,
+      //                 "assignee_name": "Wei Wu"
       //             }
       //           }
       //         ],
