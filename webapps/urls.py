@@ -29,7 +29,7 @@ urlpatterns = [
     path('workspace/<int:selected_workspace_id>/task/create/', views.create_task_action, name='create-task'),
     path('workspace/<int:selected_workspace_id>/task/edit/<int:task_id>', views.edit_task_action, name='edit-task'),
     path('edit-user-profile', views.edit_user_profile, name='edit-user-profile'),
-    path('get-username/<int:user_id>', views.get_username, name="get-username")
+    path('get-username/<int:user_id>', views.get_username, name="get-username"),
     path('photo/<int:id>', views.get_user_photo, name='photo'),
     path('otp_verify', views.otp_verify, name="otp_verify"),
 ]
