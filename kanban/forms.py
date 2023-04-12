@@ -175,6 +175,10 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('profile_description', 'picture')
+        widgets = {
+            'picture': forms.FileInput(attrs={'id': 'id_profile_picture'}),
+            'profile_description': forms.Textarea(attrs={'id': 'id_bio_input_text', 'rows': '3'}),
+        }
 
         def clean_picture(self):
             picture = self.cleaned_data['picture']
