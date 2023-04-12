@@ -46,7 +46,10 @@
             </div>
             <div class="profile-header-content">
                 <div class="profile-header-options">
-                    <span class="sub-text-m"> {{ full_name }} </span>
+                    <span class="sub-text-m"> {{ username }} </span>
+                    <button class="ellipsis-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{% static 'kanban/imgs/icon-vertical-ellipsis.svg' %}">
+                    </button>
                     <ul class="dropdown-menu customized-dropdown">
                         <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                     </ul>
