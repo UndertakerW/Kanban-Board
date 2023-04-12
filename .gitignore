@@ -9,6 +9,7 @@ migrations
 venv
 my_env
 .idea
+*.jpg
 
 # Editor backup files
 *~

@@ -386,7 +386,8 @@ def edit_user_profile(request):
 
     if request.method == 'GET':
         context['profile'] = profile
-        context['profile_form'] = ProfileForm(initial={'profile_description': profile.profile_description})
+        context['profile_form'] = ProfileForm(
+            initial={'picture': profile.picture, 'profile_description': profile.profile_description})
         context['workspaces'] = workspaces
         return render(request, 'kanban/profile.html', context)
 
