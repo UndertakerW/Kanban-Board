@@ -80,46 +80,6 @@ function displayResponse(response) {
     }
 }
 
-// Builds a new HTML "li" element for the to do list
-function makeListItemElement(item) {
-    let deleteButton
-    if (item.user === myUserName) {
-        deleteButton = `<button onclick='deleteItem(${item.id})'>X</button>`
-    } else {
-        deleteButton = "<button style='visibility: hidden'>X</button> "
-    }
-
-    let details = `<span class="details">(id=${item.id}, ip_addr=${item.ip_addr}, user=${item.user})</span>`
-
-    let element = document.createElement("li")
-    element.id = `id_item_${item.id}`
-    element.innerHTML = `${deleteButton} ${sanitize(item.text)} ${details}`
-
-    return element
-}
-
-function sanitize(s) {
-    // Be sure to replace ampersand first
-    return s.replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-}
-
-function addItem() {
-    let textInputEl = document.getElementById("item")
-    let itemText = textInputEl.value
-    if (itemText === "") return
-
-    // Clear previous error message, if any
-    displayError("")
-    
-    let data = {"action": "add", "text": itemText}
-    socket.send(JSON.stringify(data))
-
-    textInputEl.value = ""
-}
-
 function sendAddTask(task) {
     let data = {"action": "add-task", "task": task}
     socket.send(JSON.stringify(data))
@@ -132,11 +92,6 @@ function sendEditTask(task) {
 
 function sendDeleteTask(task) {
     let data = {"action": "delete-task", "task": task}
-    socket.send(JSON.stringify(data))
-}
-
-function deleteItem(id) {
-    let data = {"action": "delete", "id": id}
     socket.send(JSON.stringify(data))
 }
 
