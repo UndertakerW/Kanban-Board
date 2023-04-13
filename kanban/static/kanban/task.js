@@ -8,7 +8,7 @@ var socket = null
 
 function connectToServer() {
     // Create a new WebSocket.
-    socket = new WebSocket("ws://" + window.location.host + "/ws_todolist/data")
+    socket = new WebSocket("ws://" + window.location.host + "/kanban/data")
 
     // Handle any errors that occur.
     socket.onerror = function(error) {
@@ -29,7 +29,7 @@ function connectToServer() {
     socket.onmessage = function(event) {
         let response = JSON.parse(event.data)
         if (Array.isArray(response)) {
-            updateList(response)
+            updateTasks(response)
         } else {
             displayResponse(response)
         }
@@ -54,27 +54,6 @@ function displayResponse(response) {
     } else {
         displayMessage("Unknown response")
     }
-}
-
-function updateList(items) {
-    // Removes items from todolist if they not in items
-    let liElements = document.getElementsByTagName("li")
-    for (let i = 0; i < liElements.length; i++) {
-        let element = liElements[i]
-        let deleteIt = true
-        items.forEach(item => {
-            if (element.id === `id_item_${item.id}`) deleteIt = false
-        })
-        if (deleteIt) element.remove()
-    }
-
-    // Adds each to do list item received from the server to the displayed list
-    let list = document.getElementById("todo-list")
-    items.forEach(item => {
-        if (document.getElementById(`id_item_${item.id}`) == null) {
-            list.append(makeListItemElement(item))
-        }
-    })
 }
 
 // Builds a new HTML "li" element for the to do list
