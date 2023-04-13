@@ -40,7 +40,7 @@ function connectToServer() {
             if (test === true) {
                 test = false;
                 let task = {
-                    'id': 2212,
+                    'id': 2217,
                     'workspace': 2,
                     'taskname': 'XXXXX GLITCHED OUT! XXXXX',
                     'description': 'EDITED!',
@@ -50,7 +50,7 @@ function connectToServer() {
                     'sprint': 1,
                     'priority': 1,
                 }
-                sendEditTask(task);
+                sendDeleteTask(task);
             }
             // TEST CODE ENDS
 
@@ -121,17 +121,18 @@ function addItem() {
 }
 
 function sendAddTask(task) {
-    
     let data = {"action": "add-task", "task": task}
     socket.send(JSON.stringify(data))
-
 }
 
 function sendEditTask(task) {
-    
     let data = {"action": "edit-task", "task": task}
     socket.send(JSON.stringify(data))
+}
 
+function sendDeleteTask(task) {
+    let data = {"action": "delete-task", "task": task}
+    socket.send(JSON.stringify(data))
 }
 
 function deleteItem(id) {

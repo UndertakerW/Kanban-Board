@@ -92,7 +92,11 @@ class MyConsumer(WebsocketConsumer):
             return
 
         if action == 'delete-task':
-            self.received_delete(data)
+            if not 'task' in data:
+                self.send_error('task property not sent in JSON')
+                return
+            task = data['task']
+            self.received_delete(task)
             return
 
         self.send_error(f'Invalid action property: "{action}"')
@@ -220,6 +224,12 @@ class MyConsumer(WebsocketConsumer):
 
         task = self.validate_task(data)
 
+        # Validation error
+        # Error message already sent by self.validate_task()
+        # So just return
+        if not task:
+            return
+
         try:
             new_task = Task(workspace=task['workspace'], taskname=task['taskname'], creation_date=task['creation_date'])
             if 'description' in task:
@@ -248,6 +258,12 @@ class MyConsumer(WebsocketConsumer):
             
         task = self.validate_task(data)
 
+        # Validation error
+        # Error message already sent by self.validate_task()
+        # So just return
+        if not task:
+            return
+
         try:
             task_to_edit = Task.objects.filter(id=task['id']).first()
             if 'taskname' in task:
@@ -273,22 +289,26 @@ class MyConsumer(WebsocketConsumer):
 
 
     def received_delete(self, data):
-        if not 'id' in data:
-            self.send_error('id property not sent in JSON')
-            return
+        required_field_names = ['id']
+        for field_name in required_field_names:
+            if not field_name in data:
+                return self.send_error(f'{field_name} property not sent in JSON')
+            
+        task = self.validate_task(data)
 
+        # Validation error
+        # Error message already sent by self.validate_task()
+        # So just return
+        if not task:
+            return
+        
         try:
-            task = Task.objects.get(id=data['id'])
-        except Task.DoesNotExist:
-            self.send_error(f'Task with id="{data["id"]}" does not exist')
+            task_to_delete = Task.objects.get(id=task['id'])
+            task_to_delete.delete()
+            self.broadcast_task_delete(task['id'])
+        except:
+            self.send_error(f'Invalid task')
             return
-
-        workspace = task.workspace
-        if self.user != workspace.creator and self.user not in workspace.participants:
-            return self.send_error(f'user="{self.user}" is not a participant of workspace_id={workspace.id}')
-
-        task.delete()
-        self.broadcast_list()
 
     def make_task_dict(self, task: Task):
         return {
@@ -342,6 +362,11 @@ class MyConsumer(WebsocketConsumer):
 
     def broadcast_task(self, task):
         self.broadcast_data(json.dumps([self.make_task_dict(task)]))
+
+    def broadcast_task_delete(self, id):
+        self.broadcast_data(json.dumps([{
+            'id': id,
+            'action': 'delete'}]))
 
     def broadcast_event(self, event):
         self.send(text_data=event['message'])
