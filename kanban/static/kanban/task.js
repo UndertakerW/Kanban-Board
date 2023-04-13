@@ -40,16 +40,17 @@ function connectToServer() {
             if (test === true) {
                 test = false;
                 let task = {
+                    'id': 2212,
                     'workspace': 2,
-                    'taskname': 'WS-created task',
-                    'description': 'something',
+                    'taskname': 'XXXXX GLITCHED OUT! XXXXX',
+                    'description': 'EDITED!',
                     'assignee': 1,
                     'due_date': '2023-04-15',
                     'status': 1,
                     'sprint': 1,
                     'priority': 1,
                 }
-                sendTask(task);
+                sendEditTask(task);
             }
             // TEST CODE ENDS
 
@@ -119,9 +120,16 @@ function addItem() {
     textInputEl.value = ""
 }
 
-function sendTask(task) {
+function sendAddTask(task) {
     
     let data = {"action": "add-task", "task": task}
+    socket.send(JSON.stringify(data))
+
+}
+
+function sendEditTask(task) {
+    
+    let data = {"action": "edit-task", "task": task}
     socket.send(JSON.stringify(data))
 
 }

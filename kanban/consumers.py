@@ -82,6 +82,14 @@ class MyConsumer(WebsocketConsumer):
             task = data['task']
             self.received_add(task)
             return
+        
+        if action == 'edit-task':
+            if not 'task' in data:
+                self.send_error('task property not sent in JSON')
+                return
+            task = data['task']
+            self.received_edit(task)
+            return
 
         if action == 'delete-task':
             self.received_delete(data)
@@ -124,6 +132,7 @@ class MyConsumer(WebsocketConsumer):
                 return None
             task_object = task_query.first()
             if not self.validate_authorization(task_object.workspace):
+                self.send_error(f'task_id="{id}" cannot be edited by user="{self.user}"')
                 return None
             task['id'] = id
             
@@ -230,6 +239,37 @@ class MyConsumer(WebsocketConsumer):
             self.broadcast_task(new_task)
         except:
             self.send_error(f'Invalid task')
+
+    def received_edit(self, data):
+        required_field_names = ['id']
+        for field_name in required_field_names:
+            if not field_name in data:
+                return self.send_error(f'{field_name} property not sent in JSON')
+            
+        task = self.validate_task(data)
+
+        try:
+            task_to_edit = Task.objects.filter(id=task['id']).first()
+            if 'taskname' in task:
+                task_to_edit.taskname = task['taskname']
+            if 'description' in task:
+                task_to_edit.description = task['description']
+            if 'assignee' in task: 
+                task_to_edit.assignee=task['assignee']
+            if 'due_date' in task:
+                task_to_edit.due_date=task['due_date']
+            if 'status' in task:
+                task_to_edit.status=task['status'] 
+            if 'sprint' in task:
+                task_to_edit.sprint=task['sprint']
+            if 'priority' in task:
+                task_to_edit.priority=task['priority']      
+            task_to_edit.save()
+
+            self.broadcast_task(task_to_edit)
+        except:
+            self.send_error(f'Invalid task')
+
 
 
     def received_delete(self, data):
