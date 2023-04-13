@@ -154,7 +154,7 @@ class MyConsumer(WebsocketConsumer):
                             status=status, sprint=sprint, priority=priority)
             new_task.save()
 
-            self.broadcast_list()
+            self.broadcast_task(new_task)
         except:
             self.send_error(f'Invalid task')
 
@@ -177,6 +177,20 @@ class MyConsumer(WebsocketConsumer):
         task.delete()
         self.broadcast_list()
 
+    def make_task_dict(task: Task):
+        return {
+            'id': task.id,
+            'workspace': task.workspace.id,
+            'taskname': task.taskname,
+            'description': task.description,
+            'assignee': task.assignee.id,
+            'creation_date': task.creation_date.strftime('%Y-%m-%d'),
+            'due_date': task.due_date.strftime('%Y-%m-%d'),
+            'status': task.status,
+            'sprint': task.sprint,
+            'priority': task.priority,
+        }
+    
     def send_error(self, error_message):
         self.send(text_data=json.dumps({'error': error_message}))
 
@@ -197,9 +211,26 @@ class MyConsumer(WebsocketConsumer):
             self.group_name,
             {
                 'type': 'broadcast_event',
-                'message': json.dumps(Item.make_item_list())
+                'message': json.dumps(Task.make_item_list())
             }
         )
+
+    def broadcast_msg(self, msg, user_ids):
+        async_to_sync(self.channel_layer.group_send)(
+            self.group_name,
+            {
+                'type': 'broadcast_event',
+                'message': msg
+            },
+            # send the message only to participants of the workspace, and to the creator of the workspace
+            channel_layer_filter={'user__in': user_ids}
+        )
+
+    def broadcast_task(self, new_task: Task):
+        workspace = new_task.workspace
+        workspace_participants = list(workspace.participants.values_list('id', flat=True))
+        workspace_creator = workspace.creator.id
+        self.broadcast_msg(self, json.dumps(self.make_task_dict(new_task)), workspace_participants + [workspace_creator])
 
     def broadcast_event(self, event):
         self.send(text_data=event['message'])
