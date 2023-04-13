@@ -55,9 +55,12 @@
     margin: 20px 0 10px;
 }
 
-#id_profile_description {
+#id_bio_input_text {
     width: 400px;
     rows: 2;
 }
 
-
+#id_user_picture {
+    width: 200px;
+    height: 200px;
+}
