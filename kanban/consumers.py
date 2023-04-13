@@ -68,11 +68,11 @@ class MyConsumer(WebsocketConsumer):
 
         action = data['action']
 
-        if action == 'add':
+        if action == 'add-task':
             self.received_add(data)
             return
 
-        if action == 'delete':
+        if action == 'delete-task':
             self.received_delete(data)
             return
 
