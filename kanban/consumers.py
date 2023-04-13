@@ -97,54 +97,67 @@ class MyConsumer(WebsocketConsumer):
         return True
     
     def received_add(self, data):
-        if not 'text' in data:
-            self.send_error('"text" property not sent in JSON')
-            return
+        required_field_names = ['workspace', 'taskname']
+        for field_name in required_field_names:
+            if not field_name in data:
+                return self.send_error(f'{field_name} property not sent in JSON')
 
         workspace_id = data['workspace']
         workspace_query = Workspace.objects.filter(id=workspace_id)
         if not workspace_query.exists():
-            self.send_error(f'workspace_id={workspace_id} does not exist')
+            return self.send_error(f'workspace_id={workspace_id} does not exist')
         workspace = workspace_query.first()
         if self.user != workspace.creator and self.user not in workspace.participants:
-            self.send_error(f'user={self.user} is not a participant of workspace_id={workspace_id}"')
+            return self.send_error(f'user={self.user} is not a participant of workspace_id={workspace_id}')
 
         taskname = data['taskname']
-        description = data['description']
+        if not Task._meta.get_field('taskname').run_validators(taskname):
+            return self.send_error(f'taskname={taskname} is too long')
+        
+        if 'description' in data:
+            description = data['description']
+            if not Task._meta.get_field('description').run_validators(description):
+                return self.send_error(f'description={description} is too long')
 
-        assignee_id = data['assignee']
-        assignee_query = Workspace.objects.filter(id=assignee_id)
-        if not assignee_query.exists():
-            self.send_error(f'assignee_id={assignee_id} does not exist')
-        assignee = assignee_query.first()
-        if assignee != workspace.creator and assignee not in workspace.participants:
-            self.send_error(f'assignee={assignee} is not a participant of workspace_id={workspace_id}"')
+        if 'assignee' in data:
+            assignee_id = data['assignee']
+            assignee_query = Workspace.objects.filter(id=assignee_id)
+            if not assignee_query.exists():
+                return self.send_error(f'assignee_id={assignee_id} does not exist')
+            assignee = assignee_query.first()
+            if assignee != workspace.creator and assignee not in workspace.participants:
+                return self.send_error(f'assignee={assignee} is not a participant of workspace_id={workspace_id}')
 
         creation_date = date.today()
         due_date = data['due_date']
         if not self.validate_date(due_date):
-            self.send_error(f'due_date={due_date} is not a valid date"')
+            return self.send_error(f'due_date={due_date} is not a valid date')
 
-        status = data['status']
-        if not isinstance(status, int):
-            self.send_error(f'status={status} is not a valid status"')
+        if 'status' in data:
+            status = data['status']
+            if not isinstance(status, int):
+                return self.send_error(f'status={status} is not a valid status')
         
-        sprint = data['sprint']
-        if not isinstance(sprint, int):
-            self.send_error(f'sprint={sprint} is not a valid integer"')
+        if 'sprint' in data:
+            sprint = data['sprint']
+            if not isinstance(sprint, int):
+                return self.send_error(f'sprint={sprint} is not a valid integer')
 
-        priority = data['priority']
-        if not isinstance(priority, int):
-            self.send_error(f'priority={priority} is not a valid integer"')
+        if 'priority' in data:
+            priority = data['priority']
+            if not isinstance(priority, int):
+                return self.send_error(f'priority={priority} is not a valid integer')
 
+        try:
+            new_task = Task(workspace=workspace, taskname=taskname, description=description,
+                            assignee=assignee, creation_date=creation_date, due_date=due_date,
+                            status=status, sprint=sprint, priority=priority)
+            new_task.save()
 
-        new_task = Task(workspace=workspace, taskname=taskname, description=description,
-                        assignee=assignee, creation_date=creation_date, due_date=due_date,
-                        status=status, sprint=sprint, priority=priority)
-        new_item = Item(text=text, ip_addr=self.scope['client'][0], user=self.user)
-        new_item.save()
+            self.broadcast_list()
+        except:
+            self.send_error(f'Invalid task')
 
-        self.broadcast_list()
 
     def received_delete(self, data):
         if not 'id' in data:
@@ -152,16 +165,16 @@ class MyConsumer(WebsocketConsumer):
             return
 
         try:
-            item = Item.objects.get(id=data['id'])
-        except Item.DoesNotExist:
-            self.send_error(f"Item with id={data['id']} does not exist")
+            task = Task.objects.get(id=data['id'])
+        except Task.DoesNotExist:
+            self.send_error(f"Task with id={data['id']} does not exist")
             return
 
-        if self.user.id != item.user.id:
-            self.send_error("You cannot delete other user's entries")
-            return
+        workspace = task.workspace
+        if self.user != workspace.creator and self.user not in workspace.participants:
+            return self.send_error(f'user={self.user} is not a participant of workspace_id={workspace.id}')
 
-        item.delete()
+        task.delete()
         self.broadcast_list()
 
     def send_error(self, error_message):
