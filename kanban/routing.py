@@ -1,4 +1,4 @@
-from django.urls import path, path
+from django.urls import path
 from kanban import consumers
 
 websocket_urlpatterns = [

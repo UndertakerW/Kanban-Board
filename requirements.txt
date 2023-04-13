@@ -3,5 +3,6 @@ django-crispy-forms
 django_otp
 pyopt
 social-auth-app-django
-channels
-
+daphne==4.0.0
+channels==4.0.0
+attrs==22.2.0
