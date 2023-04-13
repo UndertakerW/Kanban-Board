@@ -3,4 +3,5 @@ django-crispy-forms
 django_otp
 pyopt
 social-auth-app-django
+channels
 
