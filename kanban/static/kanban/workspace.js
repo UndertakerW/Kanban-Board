@@ -61,10 +61,11 @@ function compareTasks(a, b, sortBy) {
 
 // Function to update tasks on receiving a list of tasks from WebSocket
 // Paramater tasks is a list of tasks
-function updateTask(task) {
+function updateTasks(tasks) {
   // TODO: Implement the function
-  console.log(task.taskname);
-  return task.id;
+  tasks.forEach(task => {
+    console.log(task);
+  })
 }
 
 // Function to group tasks by assignee and sort them based on the sortBy parameter

@@ -96,7 +96,7 @@ def compute_edit_workspace_context(request, context, workspace):
     edit_form = NewWorkspaceForm(user=request.user, instance=workspace)
     edit_form.initial['name'] = workspace.name
     context['edit_form'] = edit_form
-    print(edit_form)
+    # print(edit_form)
 
 
 # Naming regulation: For better understanding, the actions should all name
@@ -116,8 +116,8 @@ def home_action(request):
 
     profile = get_object_or_404(Profile, user=user)
     workspaces = Workspace.objects.filter(participants=user)
-    print("user id is:")
-    print(profile.user.id)
+    # print("user id is:")
+    # print(profile.user.id)
 
     context['profile'] = profile
     context['profile_form'] = ProfileForm(initial={'profile_description': profile.profile_description})
@@ -381,8 +381,8 @@ def edit_user_profile(request):
 
     profile = get_object_or_404(Profile, user=user)
     workspaces = Workspace.objects.filter(participants=user)
-    print("user id is:")
-    print(profile.user.id)
+    # print("user id is:")
+    # print(profile.user.id)
 
     if request.method == 'GET':
         context['profile'] = profile

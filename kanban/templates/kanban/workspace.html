@@ -20,6 +20,11 @@
         {% load static %}
         <script src="{% static 'kanban/workspace.js' %}"></script>
         <script src="{% static 'kanban/task.js' %}"></script>
+        <script>
+            const myUserName = "{{ request.user.username }}"
+            const workspaceId = {{ selected_workspace.id }}
+            window.onload = connectToServer
+        </script>
         <!-- Pass the tasks data to JavaScript -->
         <script id="workspace-js" type="application/json">{{ tasks|safe }}</script>
 	</head>
@@ -38,6 +43,10 @@
                             Edit
                         </button>
                     {% endif %}
+                </div>
+                <div id="message">
+                </div>
+                <div id="error">
                 </div>
                 <div class="workspace-header-options">
                     <a class="sub-text-m" href="{% url 'home' %}"> {{ username }} </a> 

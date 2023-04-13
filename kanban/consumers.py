@@ -3,8 +3,7 @@ from asgiref.sync import async_to_sync
 from kanban.models import Task, Workspace, User
 import json
 from threading import Lock
-import datetime
-from datetime import date
+from datetime import date, datetime
 from django.core.exceptions import ValidationError
 
 lock = Lock()
@@ -17,21 +16,13 @@ class MyConsumer(WebsocketConsumer):
     user = None
 
     def connect(self):
-        async_to_sync(self.channel_layer.group_add)(
-            self.group_name, self.channel_name
-        )
 
         self.accept()
 
         if not self.scope["user"].is_authenticated:
             self.send_error(f'You must be logged in')
             self.close()
-            return
-
-        if not self.scope["user"].email.endswith("@andrew.cmu.edu"):
-            self.send_error(f'You must be logged with Andrew identity')
-            self.close()
-            return            
+            return      
 
         self.user = self.scope["user"]
 
@@ -41,7 +32,6 @@ class MyConsumer(WebsocketConsumer):
             message = '{} active connections'.format(active_connections)
         self.broadcast_message(message)
 
-        self.broadcast_list()
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -68,8 +58,29 @@ class MyConsumer(WebsocketConsumer):
 
         action = data['action']
 
+        if action == 'get-tasks':
+            if not 'workspace' in data:
+                self.send_error('workspace property not sent in JSON')
+                return
+            workspace_id = data['workspace']
+            try:
+                workspace = Workspace.objects.get(id=workspace_id)
+            except Workspace.DoesNotExist:
+                self.send_error(f'workspace={workspace_id} does not exist')
+                return
+            self.group_name = str(workspace_id)
+            async_to_sync(self.channel_layer.group_add)(
+                self.group_name, self.channel_name
+            )
+            self.broadcast_list(workspace)
+            return
+
         if action == 'add-task':
-            self.received_add(data)
+            if not 'task' in data:
+                self.send_error('task property not sent in JSON')
+                return
+            task = data['task']
+            self.received_add(task)
             return
 
         if action == 'delete-task':
@@ -78,7 +89,7 @@ class MyConsumer(WebsocketConsumer):
 
         self.send_error(f'Invalid action property: "{action}"')
 
-    def validate_date(date_string):
+    def validate_date(self, date_string):
         try:
             # parse the date string using the datetime module
             date = datetime.strptime(date_string, '%Y-%m-%d').date()
@@ -96,62 +107,124 @@ class MyConsumer(WebsocketConsumer):
         # the date is valid according to Django's DateField
         return True
     
+    def validate_authorization(self, workspace: Workspace):
+        if self.user != workspace.creator and self.user not in workspace.participants:
+            self.send_error(f'user="{self.user}" is not a participant of workspace_id={workspace.id}')
+            return False
+        return True
+
+    def validate_task(self, data):
+        task = {}
+
+        if 'id' in data:
+            id = data['id']
+            task_query = Task.objects.filter(id=id)
+            if not task_query.exists():
+                self.send_error(f'task_id="{id}" does not exist')
+                return None
+            task_object = task_query.first()
+            if not self.validate_authorization(task_object.workspace):
+                return None
+            task['id'] = id
+            
+
+        if 'workspace' in data:
+            workspace_id = data['workspace']
+            workspace_query = Workspace.objects.filter(id=workspace_id)
+            if not workspace_query.exists():
+                self.send_error(f'workspace_id="{workspace_id}" does not exist')
+                return None
+            workspace = workspace_query.first()
+            if not self.validate_authorization(workspace):
+                return None
+            task['workspace'] = workspace
+
+        if 'taskname' in data:
+            taskname = data['taskname']
+            try:
+                Task._meta.get_field('taskname').run_validators(taskname)
+            except ValidationError as e:
+                self.send_error(f'taskname="{taskname}" is too long')
+                return None
+            task['taskname'] = taskname
+        
+        if 'description' in data:
+            description = data['description']
+            try:
+                Task._meta.get_field('description').run_validators(description)
+            except ValidationError as e:
+                self.send_error(f'description="{description}" is too long')
+                return None
+            task['description'] = description
+
+        if 'assignee' in data:
+            assignee_id = data['assignee']
+            assignee_query = User.objects.filter(id=assignee_id)
+            if not assignee_query.exists():
+                self.send_error(f'assignee_id="{assignee_id}" does not exist')
+                return None
+            assignee = assignee_query.first()
+            if assignee != workspace.creator and not workspace.participants.filter(id=assignee.id).exists():
+                self.send_error(f'assignee="{assignee}" is not a participant of workspace_id={workspace_id}')
+                return None
+            task['assignee'] = assignee
+
+        creation_date = date.today()
+        task['creation_date'] = creation_date
+
+        if 'due_date' in data:
+            due_date_str = data['due_date']
+            if not self.validate_date(due_date_str):
+                self.send_error(f'due_date="{due_date_str}" is not a valid date')
+                return None
+            due_date = datetime.strptime(due_date_str, '%Y-%m-%d').date()
+            task['due_date'] = due_date
+
+        if 'status' in data:
+            status = data['status']
+            if not isinstance(status, int):
+                self.send_error(f'status="{status}" is not a valid status')
+                return None
+            task['status'] = status
+        
+        if 'sprint' in data:
+            sprint = data['sprint']
+            if not isinstance(sprint, int):
+                self.send_error(f'sprint="{sprint}" is not a valid integer')
+                return None
+            task['sprint'] = sprint
+
+        if 'priority' in data:
+            priority = data['priority']
+            if not isinstance(priority, int):
+                self.send_error(f'priority="{priority}" is not a valid integer')
+                return None
+            task['priority'] = priority
+        
+        return task
+
     def received_add(self, data):
         required_field_names = ['workspace', 'taskname']
         for field_name in required_field_names:
             if not field_name in data:
                 return self.send_error(f'{field_name} property not sent in JSON')
 
-        workspace_id = data['workspace']
-        workspace_query = Workspace.objects.filter(id=workspace_id)
-        if not workspace_query.exists():
-            return self.send_error(f'workspace_id={workspace_id} does not exist')
-        workspace = workspace_query.first()
-        if self.user != workspace.creator and self.user not in workspace.participants:
-            return self.send_error(f'user={self.user} is not a participant of workspace_id={workspace_id}')
-
-        taskname = data['taskname']
-        if not Task._meta.get_field('taskname').run_validators(taskname):
-            return self.send_error(f'taskname={taskname} is too long')
-        
-        if 'description' in data:
-            description = data['description']
-            if not Task._meta.get_field('description').run_validators(description):
-                return self.send_error(f'description={description} is too long')
-
-        if 'assignee' in data:
-            assignee_id = data['assignee']
-            assignee_query = Workspace.objects.filter(id=assignee_id)
-            if not assignee_query.exists():
-                return self.send_error(f'assignee_id={assignee_id} does not exist')
-            assignee = assignee_query.first()
-            if assignee != workspace.creator and assignee not in workspace.participants:
-                return self.send_error(f'assignee={assignee} is not a participant of workspace_id={workspace_id}')
-
-        creation_date = date.today()
-        due_date = data['due_date']
-        if not self.validate_date(due_date):
-            return self.send_error(f'due_date={due_date} is not a valid date')
-
-        if 'status' in data:
-            status = data['status']
-            if not isinstance(status, int):
-                return self.send_error(f'status={status} is not a valid status')
-        
-        if 'sprint' in data:
-            sprint = data['sprint']
-            if not isinstance(sprint, int):
-                return self.send_error(f'sprint={sprint} is not a valid integer')
-
-        if 'priority' in data:
-            priority = data['priority']
-            if not isinstance(priority, int):
-                return self.send_error(f'priority={priority} is not a valid integer')
+        task = self.validate_task(data)
 
         try:
-            new_task = Task(workspace=workspace, taskname=taskname, description=description,
-                            assignee=assignee, creation_date=creation_date, due_date=due_date,
-                            status=status, sprint=sprint, priority=priority)
+            new_task = Task(workspace=task['workspace'], taskname=task['taskname'], creation_date=task['creation_date'])
+            if 'description' in task:
+                new_task.description = task['description']
+            if 'assignee' in task: 
+                new_task.assignee=task['assignee']
+            if 'due_date' in task:
+                new_task.due_date=task['due_date']
+            if 'status' in task:
+                new_task.status=task['status'] 
+            if 'sprint' in task:
+                new_task.sprint=task['sprint']
+            if 'priority' in task:
+                new_task.priority=task['priority']      
             new_task.save()
 
             self.broadcast_task(new_task)
@@ -167,17 +240,17 @@ class MyConsumer(WebsocketConsumer):
         try:
             task = Task.objects.get(id=data['id'])
         except Task.DoesNotExist:
-            self.send_error(f"Task with id={data['id']} does not exist")
+            self.send_error(f'Task with id="{data["id"]}" does not exist')
             return
 
         workspace = task.workspace
         if self.user != workspace.creator and self.user not in workspace.participants:
-            return self.send_error(f'user={self.user} is not a participant of workspace_id={workspace.id}')
+            return self.send_error(f'user="{self.user}" is not a participant of workspace_id={workspace.id}')
 
         task.delete()
         self.broadcast_list()
 
-    def make_task_dict(task: Task):
+    def make_task_dict(self, task: Task):
         return {
             'id': task.id,
             'workspace': task.workspace.id,
@@ -190,6 +263,13 @@ class MyConsumer(WebsocketConsumer):
             'sprint': task.sprint,
             'priority': task.priority,
         }
+
+    def make_task_dict_list(self, workspace_id):
+        task_dict_list = []
+        for task in Task.objects.filter(workspace_id=workspace_id):
+            task_dict = self.make_task_dict(task)
+            task_dict_list.append(task_dict)
+        return task_dict_list
     
     def send_error(self, error_message):
         self.send(text_data=json.dumps({'error': error_message}))
@@ -206,31 +286,22 @@ class MyConsumer(WebsocketConsumer):
             }
         )
 
-    def broadcast_list(self):
-        async_to_sync(self.channel_layer.group_send)(
-            self.group_name,
-            {
-                'type': 'broadcast_event',
-                'message': json.dumps(Task.make_item_list())
-            }
-        )
-
-    def broadcast_msg(self, msg, user_ids):
+    # send the message only to participants of the workspace, and to the creator of the workspace
+    def broadcast_data(self, msg):
+        print("[consumers.py] Broadcasting data to group", self.group_name)
         async_to_sync(self.channel_layer.group_send)(
             self.group_name,
             {
                 'type': 'broadcast_event',
                 'message': msg
             },
-            # send the message only to participants of the workspace, and to the creator of the workspace
-            channel_layer_filter={'user__in': user_ids}
         )
 
-    def broadcast_task(self, new_task: Task):
-        workspace = new_task.workspace
-        workspace_participants = list(workspace.participants.values_list('id', flat=True))
-        workspace_creator = workspace.creator.id
-        self.broadcast_msg(self, json.dumps(self.make_task_dict(new_task)), workspace_participants + [workspace_creator])
+    def broadcast_list(self, workspace: Workspace):
+        self.broadcast_data(json.dumps(self.make_task_dict_list(workspace.id)))
+
+    def broadcast_task(self, task):
+        self.broadcast_data(json.dumps([self.make_task_dict(task)]))
 
     def broadcast_event(self, event):
         self.send(text_data=event['message'])
