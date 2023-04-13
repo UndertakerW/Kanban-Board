@@ -60,7 +60,7 @@
             <div class="profile-content">
                 <h1 class="heading-xxl"> Profile of {{username}} </h1>
 
-                <div id = "id_profile_picture">
+                <div>
                     {% if not profile.picture %}
                         <img id = "id_user_picture" src="{% static 'kanban/default.jpg' %}">
                     {% else %}
