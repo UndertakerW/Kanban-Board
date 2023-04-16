@@ -286,8 +286,6 @@ class MyConsumer(WebsocketConsumer):
         except:
             self.send_error(f'Invalid task')
 
-
-
     def received_delete(self, data):
         required_field_names = ['id']
         for field_name in required_field_names:
@@ -330,7 +328,7 @@ class MyConsumer(WebsocketConsumer):
             task_dict = self.make_task_dict(task)
             task_dict_list.append(task_dict)
         return task_dict_list
-    
+
     def send_error(self, error_message):
         self.send(text_data=json.dumps({'error': error_message}))
 
