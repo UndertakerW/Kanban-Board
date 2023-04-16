@@ -11,6 +11,9 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse, Http404
 
 
+from django.conf import settings
+from django.core.mail import send_mail
+
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm, OTPForm
 from kanban.models import Profile, Workspace, Task
 
@@ -199,10 +202,16 @@ def register_action(request):
 
     profile = Profile()
     profile.user = new_user
-    profile.otp = 111
-    # random.randint(1000, 9999)
+    profile.otp = random.randint(1000, 9999)
 
     profile.save()
+
+    # send email with notification
+    subject = 'welcome to Kanban '
+    message = f'Hi {new_user.username}, thank you for registering in Kanban. Your OTP is {profile.otp}.'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [new_user.email, ]
+    send_mail(subject, message, email_from, recipient_list)
 
     # return render(request, 'kanban/otp.html', context)
     # login(request, new_user)
