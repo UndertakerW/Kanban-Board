@@ -17,6 +17,7 @@ from django.core.mail import send_mail
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm, OTPForm
 from kanban.models import Profile, Workspace, Task
 
+import random
 
 # Function name:    _status_checkobjects.
 # Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
