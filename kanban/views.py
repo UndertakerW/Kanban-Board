@@ -81,16 +81,29 @@ def otp_verify(request):
     form = OTPForm(request.POST)
     context['form'] = form
 
-    # Validates the form.
-    if not form.is_valid():
+    if request.method == 'GET':
         return render(request, 'kanban/otp.html', context)
 
-    user = get_object_or_404(User, username=form.cleaned_data['username'])
+    username = request.POST.get('username')
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        context['error_message'] = "Invalid username, please check your input."
+        return render(request, 'kanban/otp.html', context)
+
+    # Validates the form.
+    if not form.is_valid():
+        context['error_message'] = "Invalid otp, please check your email and input the correct otp."
+        return render(request, 'kanban/otp.html', context)
+
     profile = get_object_or_404(Profile, user=user)
     if profile.otp == form.cleaned_data['otp']:
         profile.authentication_status = True
         profile.save()
-    return redirect(reverse('home'))
+        return redirect(reverse('home'))
+    else:
+        context['error_message'] = "Invalid otp, please check your email and input the correct otp."
+        return render(request, 'kanban/otp.html', context)
 
 
 @login_required
@@ -240,8 +253,6 @@ def create_workspace_action(request):
     new_workspace_form = NewWorkspaceForm(request.POST, instance=workspace)
     # print(request.POST['name'])
 
-    # TODO: should clarify where the create action happens. If it happens
-    # on the profile page, then it should return profile page.
     if not new_workspace_form.is_valid():
         context['form'] = new_workspace_form
         context['task_form'] = TaskForm()
