@@ -31,8 +31,12 @@
                         <span>Login with Google</span>
                     </button>
                 </a>
-                <a href="{% url 'register' %}" class="login-icon-google" id="id_register_link">Register</a>
-                <a href="{% url 'otp_verify' %}" class="spaced-button" id="id_otp_verify_link">OTP Verify</a>
+                <a href="{% url 'register' %}" id="id_register_link">
+                    <button class="button-secondary-l spaced-button oauth_button"> Register </button>
+                </a>
+                <a href="{% url 'otp_verify' %}" class="spaced-button" id="id_otp_verify_link">
+                   <button class="button-secondary-l spaced-button oauth_button"> OTP Verify </button>
+                 </a>
             </div>
         </div>
     </body>
