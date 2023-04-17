@@ -99,4 +99,3 @@ function getWorkspaceTasks(workspace_id) {
     let data = {"action": "get-tasks", "workspace": workspace_id}
     socket.send(JSON.stringify(data))
 }
-
