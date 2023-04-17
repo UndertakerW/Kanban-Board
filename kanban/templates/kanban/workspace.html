@@ -153,40 +153,94 @@
             </div>
         </div>
 
+         <!-- Task Edit Modal -->
+         <div class="modal fade" id="task-edit-modal" tabindex="-1" aria-labelledby="task-edit-modal-label" aria-hidden="true">
+            <div class="modal-task-id" style="display: none;"></div>
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="task-edit-modal-label">Add New Task</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="modal-task-edit-form" id="modal-task-edit-form" action="/submit" method="post">
+                        {{ task_form }}
+                        {% csrf_token %}
+                        <button type="submit" class="button-large-main-purple modal-button">Submit</button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+
         <!-- boostrap -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
         <script>
-            // Get a reference to the form element
-            const form = document.getElementById('modal-task-creation-form');
+            // Get a reference to the task creation form
+            const task_creation_form = document.getElementById('modal-task-creation-form');
 
             // Add a submit event listener to the form
-            form.addEventListener('submit', (event) => {
+            task_creation_form.addEventListener('submit', (event) => {
                 // Prevent the form from submitting normally
                 event.preventDefault();
-                console.log(typeof form.status.value);
-
+                
                 // Get the values of the form fields
                 const task = {
-                    workspace:form.workspace.value,
-                    taskname: form.taskname.value,
-                    description: form.description.value,
-                    assignee: form.assignee.value,
-                    due_date: form.due_date.value,
-                    status: parseInt(form.status.value),
-                    sprint: parseInt(form.sprint.value),
-                    priority: parseInt(form.priority.value),
+                    workspace:task_creation_form.workspace.value,
+                    taskname: task_creation_form.taskname.value,
+                    description: task_creation_form.description.value,
+                    assignee: task_creation_form.assignee.value,
+                    due_date: task_creation_form.due_date.value,
+                    status: parseInt(task_creation_form.status.value),
+                    sprint: parseInt(task_creation_form.sprint.value),
+                    priority: parseInt(task_creation_form.priority.value),
                 };
 
                 // Call the sendAddTask() function with the task data
                 sendAddTask(task);
 
                 // Clear the form fields
-                form.reset();
-                // hide modal
-                const modalElement = document.querySelector('#task-creation-modal');
-                const myModal = bootstrap.Modal.getInstance(modalElement);
-                myModal.hide();
+                task_creation_form.reset();
+                // Hide modal
+                const task_creation_modal = document.querySelector('#task-creation-modal');
+                const task_creation_modal_instance = bootstrap.Modal.getInstance(task_creation_modal);
+                task_creation_modal_instance.hide();
             });
+        
+            // Get a reference to the task edit form
+            const task_edit_form = document.getElementById('modal-task-edit-form');
+
+            // Add a submit event listener to the form
+            task_edit_form.addEventListener('submit', (event) => {
+                // Prevent the form from submitting normally
+                event.preventDefault();
+                let id = document.querySelector("#task-edit-modal .modal-task-id");
+                console.log(id);
+                console.log(id.innerHTML)
+                // Get the values of the form fields
+                const task = {
+                    id: parseInt(id.textContent),
+                    workspace:task_edit_form.workspace.value,
+                    taskname: task_edit_form.taskname.value,
+                    description: task_edit_form.description.value,
+                    assignee: task_edit_form.assignee.value,
+                    due_date: task_edit_form.due_date.value,
+                    status: parseInt(task_edit_form.status.value),
+                    sprint: parseInt(task_edit_form.sprint.value),
+                    priority: parseInt(task_edit_form.priority.value),
+                };
+
+                // Call the sendAddTask() function with the task data
+                sendEditTask(task);
+
+                // Clear the form fields
+                task_creation_form.reset();
+                
+                // Hide modal
+                const task_creation_modal = document.querySelector('#task-edit-modal');
+                const task_creation_modal_instance = bootstrap.Modal.getInstance(task_creation_modal);
+                task_creation_modal_instance.hide();
+            })
         </script>
     </body>
 </html>
