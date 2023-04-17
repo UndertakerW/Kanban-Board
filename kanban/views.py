@@ -417,9 +417,12 @@ def edit_user_profile(request):
         context = {'profile_form': profile}
         return render(request, 'kanban/profile.html', context)
 
-    profile.picture = profile_form.cleaned_data['picture']
-    profile.content_type = profile_form.cleaned_data['picture'].content_type
-    print(profile.content_type)
+    picture = profile_form.cleaned_data['picture']
+    if picture:
+        profile.picture = picture
+        profile.content_type = profile_form.cleaned_data['picture'].content_type
+        print(profile.content_type)
+
     profile.profile_description = profile_form.cleaned_data['profile_description']
 
     profile.save()
