@@ -61,6 +61,7 @@
                           
                         {% endfor %}
                     {% csrf_token %}
+                    {{ error_message }}
                     <button type="submit" class="button-large-main-purple width-max spaced-button">Submit</button>
                 </form>
             
@@ -69,6 +70,7 @@
                         {{ error }}
                     </p>
                 {% endfor %}
+
                 <a href="{% url 'register' %}" class="spaced-button" id="id_register_link">Register</a>
             </div>
         </div>
