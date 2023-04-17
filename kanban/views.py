@@ -18,6 +18,7 @@ from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, Pr
 from kanban.models import Profile, Workspace, Task
 
 import random
+from datetime import date
 
 # Function name:    _status_checkobjects.
 # Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
@@ -283,6 +284,10 @@ def workspace_action(request, selected_workspace_id):
     tasks = selected_workspace.task_workspace.all()
     tasks_json = serializers.serialize('json', tasks)
     context['tasks'] = tasks_json
+    workspace_users = selected_workspace.participants.all()
+    task_form = TaskForm(initial={'creation_date': date.today()})
+    context['task_form'] = task_form
+    task_form.fields['assignee'].queryset = workspace_users
     #print(len(context['tasks']))
 
     # If the current user is the creator
@@ -338,7 +343,7 @@ def create_task_action(request, selected_workspace_id):
             'taskname': '',
             'description': '',
             'assignee': '',
-            'creation_date': '',
+            'creation_date': date.today(),
             'due_date': '',
             'status': '',
             'priority': '',
@@ -355,7 +360,6 @@ def create_task_action(request, selected_workspace_id):
 
     ### TEST CODE ###
     # Create a new task instance
-    from datetime import date
     new_task = Task(taskname='My new task',
                     workspace=selected_workspace,
                     description='This is a new task',

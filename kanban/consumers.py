@@ -128,6 +128,7 @@ class MyConsumer(WebsocketConsumer):
     def validate_task(self, data):
         task = {}
 
+        # If id is present -> edit task
         if 'id' in data:
             id = data['id']
             task_query = Task.objects.filter(id=id)
@@ -139,9 +140,10 @@ class MyConsumer(WebsocketConsumer):
                 self.send_error(f'task_id="{id}" cannot be edited by user="{self.user}"')
                 return None
             task['id'] = id
-            
+            workspace = task_object.workspace
 
-        if 'workspace' in data:
+        # If workspace is present -> create task 
+        elif 'workspace' in data:
             workspace_id = data['workspace']
             workspace_query = Workspace.objects.filter(id=workspace_id)
             if not workspace_query.exists():
@@ -151,6 +153,10 @@ class MyConsumer(WebsocketConsumer):
             if not self.validate_authorization(workspace):
                 return None
             task['workspace'] = workspace
+
+        # either id or workspace must be present
+        else:
+            return None
 
         if 'taskname' in data:
             taskname = data['taskname']

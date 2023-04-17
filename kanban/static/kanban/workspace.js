@@ -56,9 +56,6 @@ function createTaskElement(task) {
     // create event listener on clicking the button
     // populate modal with task data
     taskWrapper.addEventListener("click", function() {
-      let field_workspace = document.querySelector("#task-edit-modal #id_workspace");
-      field_workspace.value = task.fields.workspace;
-      field_workspace.disabled = true;
       let field_taskname = document.querySelector("#task-edit-modal #id_taskname_input_text");
       field_taskname.value = task.fields.taskname;
       let field_description = document.querySelector("#task-edit-modal #id_description_input_text");
@@ -112,7 +109,6 @@ function updateTasks(tasks) {
 
     // create column if no assignee column is created
     // TODO: handle the case when a column is not created 
-
 
     // otherwise create tasks with matching structure to use createTaskElement
     if (column && assigneeNameBtn) {

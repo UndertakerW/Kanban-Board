@@ -144,7 +144,20 @@
                 </div>
                 <div class="modal-body">
                     <form class="modal-task-creation-form" id="modal-task-creation-form" action="/submit" method="post">
-                        {{ task_form }}
+                        <label for="{{ task_form.taskname.id_for_label }}">Task Name:</label>
+                        {{ task_form.taskname }}
+                        <label for="{{ task_form.description.id_for_label }}">Description:</label>
+                        {{ task_form.description }}
+                        <label for="{{ task_form.assignee.id_for_label }}">Assignee:</label>
+                        {{ task_form.assignee }}
+                        <label for="{{ task_form.due_date.id_for_label }}">Due Date:</label>
+                        <input type="date" id="{{ task_form.due_date.id_for_label }}" name="{{ task_form.due_date.name }}" value="{{ task_form.due_date.value }}">
+                        <label for="{{ task_form.status.id_for_label }}">Status:</label>
+                        {{ task_form.status }}
+                        <label for="{{ task_form.sprint.id_for_label }}">Sprint:</label>
+                        {{ task_form.sprint }}
+                        <label for="{{ task_form.priority.id_for_label }}">Priority:</label>
+                        {{ task_form.priority }}
                         {% csrf_token %}
                         <button type="submit" class="button-large-main-purple modal-button">Submit</button>
                     </form>
@@ -159,15 +172,30 @@
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                <h1 class="modal-title fs-5" id="task-edit-modal-label">Add New Task</h1>
+                <h1 class="modal-title fs-5" id="task-edit-modal-label">Edit Task</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form class="modal-task-edit-form" id="modal-task-edit-form" action="/submit" method="post">
-                        {{ task_form }}
+                        <label for="{{ task_form.taskname.id_for_label }}">Task Name:</label>
+                        {{ task_form.taskname }}
+                        <label for="{{ task_form.description.id_for_label }}">Description:</label>
+                        {{ task_form.description }}
+                        <label for="{{ task_form.assignee.id_for_label }}">Assignee:</label>
+                        {{ task_form.assignee }}
+                        <label for="{{ task_form.creation_date.id_for_label }}">Creation Date:</label>
+                        <input type="date" id="{{ task_form.creation_date.id_for_label }}" name="{{ task_form.creation_date.name }}" value="{{ task_form.creation_date.value }}" readonly>
+                        <label for="{{ task_form.due_date.id_for_label }}">Due Date:</label>
+                        <input type="date" id="{{ task_form.due_date.id_for_label }}" name="{{ task_form.due_date.name }}" value="{{ task_form.due_date.value }}">
+                        <label for="{{ task_form.status.id_for_label }}">Status:</label>
+                        {{ task_form.status }}
+                        <label for="{{ task_form.sprint.id_for_label }}">Sprint:</label>
+                        {{ task_form.sprint }}
+                        <label for="{{ task_form.priority.id_for_label }}">Priority:</label>
+                        {{ task_form.priority }}
                         {% csrf_token %}
                         <button type="submit" class="button-large-main-purple modal-button">Submit</button>
-                    </form>
+                      </form>                      
                 </div>
             </div>
             </div>
@@ -186,7 +214,7 @@
                 
                 // Get the values of the form fields
                 const task = {
-                    workspace:task_creation_form.workspace.value,
+                    workspace: {{ selected_workspace.id }},
                     taskname: task_creation_form.taskname.value,
                     description: task_creation_form.description.value,
                     assignee: task_creation_form.assignee.value,
@@ -220,7 +248,7 @@
                 // Get the values of the form fields
                 const task = {
                     id: parseInt(id.textContent),
-                    workspace:task_edit_form.workspace.value,
+                    workspace: {{ selected_workspace.id }},
                     taskname: task_edit_form.taskname.value,
                     description: task_edit_form.description.value,
                     assignee: task_edit_form.assignee.value,
