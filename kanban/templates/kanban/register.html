@@ -29,7 +29,11 @@
                     {{ form }}
                     <button type="submit" class="button-large-main-purple width-max spaced-button">Register</button>
                 </form>
-                <a href="{% url 'login' %}" class="spaced-button" id="id_register_link">Login</a>
+                <a href="{% url 'login' %}" id="id_register_link">
+                    <button class="button-secondary-l spaced-button oauth_button"> 
+                        Login
+                    </button>
+                </a>
             </div>
         </div>
     </body>
