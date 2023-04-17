@@ -60,12 +60,9 @@ class Task(models.Model):
     workspace = models.ForeignKey(Workspace, on_delete=models.PROTECT, related_name="task_workspace")
     taskname = models.TextField(max_length=50)
     description = models.TextField(max_length=500)
-    # Due to a bug remove this field temporarily
     assignee = models.ForeignKey(User, on_delete=models.PROTECT, related_name="task_assignee")
-    #assignee = models.ForeignKey(User, default=None, on_delete=models.PROTECT, related_name="task_user")
     creation_date = models.DateField()
     due_date = models.DateField()
     status = models.IntegerField()
-    # Remove this field temporarily since we didn't plan a method to create sprints
     sprint = models.IntegerField()
     priority = models.IntegerField()

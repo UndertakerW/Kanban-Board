@@ -35,25 +35,6 @@ function connectToServer() {
         let response = JSON.parse(event.data)
         if (Array.isArray(response)) {
             updateTasks(response)
-
-            // TEST CODE STARTS
-            if (test === true) {
-                test = false;
-                let task = {
-                    'id': 2217,
-                    'workspace': 2,
-                    'taskname': 'XXXXX GLITCHED OUT! XXXXX',
-                    'description': 'EDITED!',
-                    'assignee': 1,
-                    'due_date': '2023-04-15',
-                    'status': 1,
-                    'sprint': 1,
-                    'priority': 1,
-                }
-                sendDeleteTask(task);
-            }
-            // TEST CODE ENDS
-
         } else {
             displayResponse(response)
         }
