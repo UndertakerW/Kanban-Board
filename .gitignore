@@ -10,6 +10,8 @@ venv
 my_env
 .idea
 *.jpg
+*.png
+*.jpeg
 
 # Editor backup files
 *~
