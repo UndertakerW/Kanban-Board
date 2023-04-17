@@ -1,6 +1,6 @@
 const statusList = ['TODO', 'DOING', 'DONE'];
 const statusDict = {1 : 'TODO', 2 : 'DOING', 3 : 'DONE'};
-const priority_levels = ['Low', 'Medium', 'High'];
+const priority_levels = ['High', 'Medium', 'Low'];
 
 // Function to create a task element
 function createTaskElement(task) {
@@ -59,6 +59,26 @@ function compareTasks(a, b, sortBy) {
     }
 }
 
+// Function to update tasks on receiving a list of tasks from WebSocket
+// Paramater tasks is a list of tasks
+function updateTasks(tasks) {
+  // Update HTML and put updated task to correct location
+  tasks.forEach(task => {
+    // locate assignee collapsible and column by assignee and status
+    let column = document.querySelector(`#collapse-body-${task.assignee} #${statusDict[task.status]}-column`);
+    let assigneeNameBtn = document.querySelector(`#collapse-btn-${task.assignee}`);
+
+    // create tasks with matching structure to use createTaskElement
+    if (column && assigneeNameBtn) {
+      let taskBody = {};
+      taskBody['fields'] = task;
+      taskBody['fields']['assignee_name'] = assigneeNameBtn.childNodes[0].data;
+      let newTask = createTaskElement(taskBody);
+      column.appendChild(newTask);
+    }
+  })
+}
+
 // Function to group tasks by assignee and sort them based on the sortBy parameter
 function groupAndSortTasks(tasks, sortBy) {
     const groupedTasks = {};
@@ -96,7 +116,6 @@ function createAssigneeColumn(assignee) {
   
     return columnWrapper;
   }
-
 
   // Function to create a status column
   function createStatusColumn(status) {
@@ -292,8 +311,6 @@ function createAssigneeColumn(assignee) {
       //           }
       //         ],
       //     }
-      console.log("groued and sorted tasks:");
-      console.log(groupedTasks);
 
       // Create collapsibles that conatains grouped tasks
       const columnsDiv = document.getElementById('columns-div');
@@ -302,8 +319,9 @@ function createAssigneeColumn(assignee) {
         // create the bootstrap collapsible <a> element
         const aElement = document.createElement("a");
         aElement.classList.add("btn", "collapsed", "bg-primary-subtle", "workspace-collapsible-button");
+        aElement.setAttribute("id", `collapse-btn-${groupedTasks[name][0].fields.assignee}`);
         aElement.setAttribute("data-bs-toggle", "collapse");
-        aElement.setAttribute("href", `#collapse-body-${count}`);
+        aElement.setAttribute("href", `#collapse-body-${groupedTasks[name][0].fields.assignee}`);
         aElement.setAttribute("role", "button");
         aElement.setAttribute("aria-expanded", "false");
         aElement.setAttribute("aria-controls", "collapseExample");
@@ -312,7 +330,7 @@ function createAssigneeColumn(assignee) {
         // create the <div> element with class "collapse"
         const divCollapse = document.createElement("div");
         divCollapse.classList.add("collapse", "show", "grouped-columns-wrapper");
-        divCollapse.setAttribute("id", `collapse-body-${count}`);
+        divCollapse.setAttribute("id", `collapse-body-${groupedTasks[name][0].fields.assignee}`);
 
         // append the <a> element and the <div> element with class "collapse" to task board
         columnsDiv.appendChild(aElement);
@@ -320,7 +338,7 @@ function createAssigneeColumn(assignee) {
 
         // Create the status columns and append them to the columns div
         const statusColumns = statusList.map(createStatusColumn);
-        const collapsibleBody = document.getElementById(`collapse-body-${count}`);
+        const collapsibleBody = document.getElementById(`collapse-body-${groupedTasks[name][0].fields.assignee}`);
         statusColumns.forEach(column => collapsibleBody.appendChild(column));
 
         // Arrange tasks by status (TODO, DOING & DONE) within collapsible groups
@@ -334,8 +352,6 @@ function createAssigneeColumn(assignee) {
     });
     
   }
-        
-
   
   // Function to toggle between the two sets of columns
   function toggleColumns() {

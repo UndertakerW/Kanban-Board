@@ -9,8 +9,22 @@ https://docs.djangoproject.com/en/4.1/howto/deployment/asgi/
 
 import os
 
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapps.settings')
 
 application = get_asgi_application()
+
+import kanban.routing
+
+application = ProtocolTypeRouter({
+    "http": application,
+    # (http->django views is added by default)
+    'websocket': AuthMiddlewareStack(
+        URLRouter(
+            kanban.routing.websocket_urlpatterns
+        )
+    ),
+})
