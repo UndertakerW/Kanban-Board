@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-n)fsts09uyo8-)+7vk(xky&9(c3x%@y0n82!a0@biw&tiub$^u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['3.82.22.152', 'team15.cmu-webapps.com']
 
 # Application definition
 
@@ -97,8 +97,11 @@ WSGI_APPLICATION = 'webapps.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {'charset': 'utf8mb4'},
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django',
+        'USER': 'Admin',
+        'PASSWORD': '76543',
     }
 }
 
@@ -156,3 +159,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login'
 
 LOGIN_REDIRECT_URL = '/edit-user-profile'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'kanbanprojectcysun@gmail.com'
+EMAIL_HOST_PASSWORD = 'ohlboxboexbkvehv'
+

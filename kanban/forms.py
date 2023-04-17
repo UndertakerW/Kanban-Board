@@ -182,9 +182,13 @@ class ProfileForm(forms.ModelForm):
 
         def clean_picture(self):
             picture = self.cleaned_data['picture']
-            if not picture or not hasattr(picture, 'content_type'):
-                raise forms.ValidationError('You must upload a picture')
-            if not picture.content_type or not picture.content_type.startswith('image'):
+
+            # If picture is not provided, return it
+            if not picture:
+                return picture
+
+            # Validate content type only if a picture is uploaded
+            if not hasattr(picture, 'content_type') or not picture.content_type.startswith('image'):
                 raise forms.ValidationError('File type is not image')
 
             return picture

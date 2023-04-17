@@ -11,9 +11,13 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse, Http404
 
 
+from django.conf import settings
+from django.core.mail import send_mail
+
 from kanban.forms import LoginForm, RegisterForm, NewWorkspaceForm, TaskForm, ProfileForm, OTPForm
 from kanban.models import Profile, Workspace, Task
 
+import random
 
 # Function name:    _status_checkobjects.
 # Usage:            A wrapper function that checks if the user's account is activated (2FA is passed)
@@ -77,16 +81,29 @@ def otp_verify(request):
     form = OTPForm(request.POST)
     context['form'] = form
 
-    # Validates the form.
-    if not form.is_valid():
+    if request.method == 'GET':
         return render(request, 'kanban/otp.html', context)
 
-    user = get_object_or_404(User, username=form.cleaned_data['username'])
+    username = request.POST.get('username')
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        context['error_message'] = "Invalid username, please check your input."
+        return render(request, 'kanban/otp.html', context)
+
+    # Validates the form.
+    if not form.is_valid():
+        context['error_message'] = "Invalid otp, please check your email and input the correct otp."
+        return render(request, 'kanban/otp.html', context)
+
     profile = get_object_or_404(Profile, user=user)
     if profile.otp == form.cleaned_data['otp']:
         profile.authentication_status = True
         profile.save()
-    return redirect(reverse('home'))
+        return redirect(reverse('home'))
+    else:
+        context['error_message'] = "Invalid otp, please check your email and input the correct otp."
+        return render(request, 'kanban/otp.html', context)
 
 
 @login_required
@@ -199,10 +216,16 @@ def register_action(request):
 
     profile = Profile()
     profile.user = new_user
-    profile.otp = 111
-    # random.randint(1000, 9999)
+    profile.otp = random.randint(1000, 9999)
 
     profile.save()
+
+    # send email with notification
+    subject = 'welcome to Kanban '
+    message = f'Hi {new_user.username}, thank you for registering in Kanban. Your OTP is {profile.otp}.'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [new_user.email, ]
+    send_mail(subject, message, email_from, recipient_list)
 
     # return render(request, 'kanban/otp.html', context)
     # login(request, new_user)
@@ -230,8 +253,6 @@ def create_workspace_action(request):
     new_workspace_form = NewWorkspaceForm(request.POST, instance=workspace)
     # print(request.POST['name'])
 
-    # TODO: should clarify where the create action happens. If it happens
-    # on the profile page, then it should return profile page.
     if not new_workspace_form.is_valid():
         context['form'] = new_workspace_form
         context['task_form'] = TaskForm()
@@ -396,9 +417,12 @@ def edit_user_profile(request):
         context = {'profile_form': profile}
         return render(request, 'kanban/profile.html', context)
 
-    profile.picture = profile_form.cleaned_data['picture']
-    profile.content_type = profile_form.cleaned_data['picture'].content_type
-    print(profile.content_type)
+    picture = profile_form.cleaned_data['picture']
+    if picture:
+        profile.picture = picture
+        profile.content_type = profile_form.cleaned_data['picture'].content_type
+        print(profile.content_type)
+
     profile.profile_description = profile_form.cleaned_data['profile_description']
 
     profile.save()
