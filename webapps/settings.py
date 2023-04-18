@@ -11,21 +11,22 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from configparser import ConfigParser
 
 # from configparser import ConfigParser
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# CONFIG = ConfigParser()
-# CONFIG.read(BASE_DIR / "config.ini")
+CONFIG = ConfigParser()
+CONFIG.read(BASE_DIR / "config.ini")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n)fsts09uyo8-)+7vk(xky&9(c3x%@y0n82!a0@biw&tiub$^u'
+SECRET_KEY = CONFIG.get("Django", "secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -100,8 +101,8 @@ DATABASES = {
         'OPTIONS': {'charset': 'utf8mb4'},
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django',
-        'USER': 'Admin',
-        'PASSWORD': '76543',
+        'USER': CONFIG.get("MYSQL", "user"),
+        'PASSWORD': CONFIG.get("MYSQL", "password"),
     }
 }
 
@@ -140,8 +141,8 @@ AUTHENTICATION_BACKENDS = (
 )
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "691365596718-knhbnf2bmlkg39d9h1ocjhj6kptjucj0.apps.googleusercontent.com"
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "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"
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = CONFIG.get("OAuth", "key")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = CONFIG.get("OAuth", "secret")
 # SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'prompt': 'select_account'}
 # SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['fullname', 'picture']
 
@@ -165,6 +166,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'kanbanprojectcysun@gmail.com'
-EMAIL_HOST_PASSWORD = 'ohlboxboexbkvehv'
+EMAIL_HOST_USER = CONFIG.get("Email", "host")
+EMAIL_HOST_PASSWORD = CONFIG.get("Email", "password")
 
