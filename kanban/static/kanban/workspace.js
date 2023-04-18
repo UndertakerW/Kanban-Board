@@ -102,28 +102,36 @@ function compareTasks(a, b, sortBy) {
 // Paramater tasks is a list of tasks
 function updateTasks(tasks) {
   // Update HTML and put updated task to correct location
-  tasks.forEach(async task => {
-    // locate assignee collapsible and column by assignee and status
-    let column = document.querySelector(`#collapse-body-${task.assignee} #${statusDict[task.status]}-column`)
-    let assigneeNameBtn = document.querySelector(`#collapse-btn-${task.assignee}`)
+  processWsTasks(tasks).then((processedTasks) => {
+    processedTasks.forEach((task) => {
+      // locate assignee collapsible and column by assignee and status
+      let column = document.querySelector(`#collapse-body-${task.assignee} #${statusDict[task.status]}-column`)
+      let assigneeNameBtn = document.querySelector(`#collapse-btn-${task.assignee}`)
 
-    // create column if no assignee column is created
-    // TODO: handle the case when a column is not created 
-
-    // otherwise create tasks with matching structure to use createTaskElement
-    if (column && assigneeNameBtn) {
-      // update task if the task is found and located
-      const taskElement = document.querySelector(`#task-wrapper-${task.id}`);
-      if (taskElement) {
-        taskElement.remove();
+      // create column if no assignee column is created
+      // TODO: handle the case when a column is not created 
+      if (!column) {
+        const columnsDiv = document.getElementById('columns-div');
+        createCollapse(task.assignee_name, task.assignee, columnsDiv);
+        column = document.querySelector(`#collapse-body-${task.assignee} #${statusDict[task.status]}-column`)
+        assigneeNameBtn = document.querySelector(`#collapse-btn-${task.assignee}`)
       }
-      let taskBody = {};
-      taskBody['fields'] = task;
-      taskBody['fields']['assignee_name'] = assigneeNameBtn.childNodes[0].data;
-      let newTask = createTaskElement(taskBody);
-      column.appendChild(newTask);
-    }
-  })
+
+      // otherwise create tasks with matching structure to use createTaskElement
+      if (column && assigneeNameBtn) {
+        // update task if the task is found and located
+        const taskElement = document.querySelector(`#task-wrapper-${task.id}`);
+        if (taskElement) {
+          taskElement.remove();
+        }
+        let taskBody = {};
+        taskBody['fields'] = task;
+        taskBody['fields']['assignee_name'] = assigneeNameBtn.childNodes[0].data;
+        let newTask = createTaskElement(taskBody);
+        column.appendChild(newTask);
+      }
+    });
+  });
 }
 
 // Function to group tasks by assignee and sort them based on the sortBy parameter
@@ -202,174 +210,29 @@ function createAssigneeColumn(assignee) {
     }
     return tasks;
   } 
+
+  async function processWsTasks(tasks) {
+    for (const task of tasks) {
+      task.assignee_name = await get_username(task['assignee']) 
+    }
+    return tasks;
+  } 
   
   // Function to arrange tasks by status and assignee
   function arrangeTasks(tasks, sortBy) {
     processTasks(tasks).then((processedTasks) => {
       var groupedTasks = groupAndSortTasks(processedTasks, sortBy);
-      // [IMPORTANT] TEST DATA, comment if necessary
-      // groupedTasks = {
-      //   "Minhui Xie": [
-      //       {
-      //           "model": "kanban.task",
-      //           "pk": 1,
-      //           "fields": {
-      //               "workspace": 1,
-      //               "taskname": "Add task to workspace",
-      //               "description": "This is a new task",
-      //               "assignee": 1,
-      //               "creation_date": "2023-04-03",
-      //               "due_date": "2022-04-30",
-      //               "status": 1,
-      //               "sprint": 1,
-      //               "priority": 2,
-      //               "assignee_name": "Minhui Xie"
-      //           }
-      //         },
-      //         {
-      //           "model": "kanban.task",
-      //           "pk": 1,
-      //           "fields": {
-      //               "workspace": 1,
-      //               "taskname": "Refine frontend design",
-      //               "description": "This is a new task",
-      //               "assignee": 1,
-      //               "creation_date": "2023-04-03",
-      //               "due_date": "2022-04-30",
-      //               "status": 1,
-      //               "sprint": 1,
-      //               "priority": 1,
-      //               "assignee_name": "Minhui Xie"
-      //           }
-      //         },
-      //         {
-      //           "model": "kanban.task",
-      //           "pk": 1,
-      //           "fields": {
-      //               "workspace": 1,
-      //               "taskname": "Arrange tasks using Bootsrtap collapse",
-      //               "description": "This is a new task",
-      //               "assignee": 1,
-      //               "creation_date": "2023-04-03",
-      //               "due_date": "2022-04-30",
-      //               "status": 2,
-      //               "sprint": 1,
-      //               "priority": 3,
-      //               "assignee_name": "Minhui Xie"
-      //           }
-      //         },
-      //         {
-      //           "model": "kanban.task",
-      //           "pk": 1,
-      //           "fields": {
-      //               "workspace": 1,
-      //               "taskname": "Create workspace interface",
-      //               "description": "This is a new task",
-      //               "assignee": 1,
-      //               "creation_date": "2023-04-03",
-      //               "due_date": "2022-04-30",
-      //               "status": 3,
-      //               "sprint": 1,
-      //               "priority": 3,
-      //               "assignee_name": "Minhui Xie"
-      //           }
-      //         },
-      //       ],
-      //       "Wei Wu": [
-      //         {
-      //             "model": "kanban.task",
-      //             "pk": 1,
-      //             "fields": {
-      //                 "workspace": 1,
-      //                 "taskname": "Use web socket to add tasks",
-      //                 "description": "This is a new task",
-      //                 "assignee": 1,
-      //                 "creation_date": "2023-04-03",
-      //                 "due_date": "2022-04-30",
-      //                 "status": 1,
-      //                 "sprint": 2,
-      //                 "priority": 2,
-      //                 "assignee_name": "Wei Wu"
-      //             }
-      //           },
-      //           {
-      //             "model": "kanban.task",
-      //             "pk": 1,
-      //             "fields": {
-      //                 "workspace": 1,
-      //                 "taskname": "Use web socket to modify tasks",
-      //                 "description": "This is a new task",
-      //                 "assignee": 1,
-      //                 "creation_date": "2023-04-03",
-      //                 "due_date": "2022-04-30",
-      //                 "status": 1,
-      //                 "sprint": 2,
-      //                 "priority": 2,
-      //                 "assignee_name": "Wei Wu"
-      //             }
-      //           },
-      //           {
-      //             "model": "kanban.task",
-      //             "pk": 1,
-      //             "fields": {
-      //                 "workspace": 1,
-      //                 "taskname": "Group tasks by status",
-      //                 "description": "This is a new task",
-      //                 "assignee": 1,
-      //                 "creation_date": "2023-04-03",
-      //                 "due_date": "2022-04-30",
-      //                 "status": 2,
-      //                 "sprint": 1,
-      //                 "priority": 2,
-      //                 "assignee_name": "Wei Wu"
-      //             }
-      //           },
-      //           {
-      //             "model": "kanban.task",
-      //             "pk": 1,
-      //             "fields": {
-      //                 "workspace": 1,
-      //                 "taskname": "Update task model",
-      //                 "description": "This is a new task",
-      //                 "assignee": 1,
-      //                 "creation_date": "2023-04-03",
-      //                 "due_date": "2022-04-30",
-      //                 "status": 2,
-      //                 "sprint": 1,
-      //                 "priority": 3,
-      //                 "assignee_name": "Wei Wu"
-      //             }
-      //           },
-      //           {
-      //             "model": "kanban.task",
-      //             "pk": 1,
-      //             "fields": {
-      //                 "workspace": 1,
-      //                 "taskname": "Edit workspace",
-      //                 "description": "This is a new task",
-      //                 "assignee": 1,
-      //                 "creation_date": "2023-04-03",
-      //                 "due_date": "2022-04-30",
-      //                 "status": 3,
-      //                 "sprint": 1,
-      //                 "priority": 3,
-      //                 "assignee_name": "Wei Wu"
-      //             }
-      //           }
-      //         ],
-      //     }
-
       // Create collapsibles that conatains grouped tasks
       const columnsDiv = document.getElementById('columns-div');
       var count = 0;
-      for (const name in groupedTasks) {
+      for (const group in groupedTasks) {
         // create basic framework to place tasks
         // including <a> element, collapse, and status columns
-        createCollapse(name, groupedTasks[name][0].fields.assignee, columnsDiv);
+        createCollapse(group, groupedTasks[group][0].fields.assignee, columnsDiv);
         // Arrange tasks by status (TODO, DOING & DONE) within collapsible groups
-        groupedTasks[name].forEach(async (task) => {
+        groupedTasks[group].forEach(async (task) => {
           const taskElement = createTaskElement(task);
-          const collapsibleBody = document.getElementById(`collapse-body-${groupedTasks[name][0].fields.assignee}`);
+          const collapsibleBody = document.getElementById(`collapse-body-${groupedTasks[group][0].fields.assignee}`);
           const column = collapsibleBody.querySelector(`#${statusDict[task.fields.status]}-column`);
           column.appendChild(taskElement);
         });
