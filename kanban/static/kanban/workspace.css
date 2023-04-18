@@ -237,3 +237,8 @@
 .modal-button {
     margin-top: 10px;
 }
+
+.modal-button-red {
+    margin-top: 10px;
+    background-color: red;
+}

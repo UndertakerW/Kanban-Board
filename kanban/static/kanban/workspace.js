@@ -104,6 +104,14 @@ function updateTasks(tasks) {
   // Update HTML and put updated task to correct location
   processWsTasks(tasks).then((processedTasks) => {
     processedTasks.forEach((task) => {
+      if ('action' in task) {
+        let taskElement = document.querySelector(`#task-wrapper-${task.id}`);
+        if (taskElement) {
+          taskElement.remove();
+        }
+      }
+      else {
+
       // locate assignee collapsible and column by assignee and status
       let column = document.querySelector(`#collapse-body-${task.assignee} #${statusDict[task.status]}-column`)
       let assigneeNameBtn = document.querySelector(`#collapse-btn-${task.assignee}`)
@@ -120,16 +128,18 @@ function updateTasks(tasks) {
       // otherwise create tasks with matching structure to use createTaskElement
       if (column && assigneeNameBtn) {
         // update task if the task is found and located
-        const taskElement = document.querySelector(`#task-wrapper-${task.id}`);
+        let taskElement = document.querySelector(`#task-wrapper-${task.id}`);
         if (taskElement) {
           taskElement.remove();
         }
+
         let taskBody = {};
         taskBody['fields'] = task;
         taskBody['fields']['assignee_name'] = assigneeNameBtn.childNodes[0].data;
         let newTask = createTaskElement(taskBody);
         column.appendChild(newTask);
       }
+    }
     });
   });
 }
@@ -213,7 +223,9 @@ function createAssigneeColumn(assignee) {
 
   async function processWsTasks(tasks) {
     for (const task of tasks) {
-      task.assignee_name = await get_username(task['assignee']) 
+      if ('assignee' in task) {
+        task.assignee_name = await get_username(task['assignee']);
+      }
     }
     return tasks;
   } 

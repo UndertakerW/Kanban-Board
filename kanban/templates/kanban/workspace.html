@@ -195,7 +195,9 @@
                         {{ task_form.priority }}
                         {% csrf_token %}
                         <button type="submit" class="button-large-main-purple modal-button">Submit</button>
-                      </form>                      
+                        <button type="button" onclick="deleteTask()" class="modal-button-red button-large-main-purple">Delete</button> 
+                    </form>  
+                                         
                 </div>
             </div>
             </div>
@@ -268,7 +270,27 @@
                 const task_creation_modal = document.querySelector('#task-edit-modal');
                 const task_creation_modal_instance = bootstrap.Modal.getInstance(task_creation_modal);
                 task_creation_modal_instance.hide();
-            })
+            });
+
+            function deleteTask() {
+                let id = document.querySelector("#task-edit-modal .modal-task-id");
+                console.log(id);
+                // Get the values of the form fields
+                const task = {
+                    id: parseInt(id.textContent),
+                };
+
+                // Call the sendAddTask() function with the task data
+                sendDeleteTask(task);
+
+                // Clear the form fields
+                task_creation_form.reset();
+                
+                // Hide modal
+                const task_creation_modal = document.querySelector('#task-edit-modal');
+                const task_creation_modal_instance = bootstrap.Modal.getInstance(task_creation_modal);
+                task_creation_modal_instance.hide();
+            }
         </script>
     </body>
 </html>

@@ -120,7 +120,7 @@ class MyConsumer(WebsocketConsumer):
         return True
     
     def validate_authorization(self, workspace: Workspace):
-        if self.user != workspace.creator and self.user not in workspace.participants:
+        if self.user != workspace.creator and not workspace.participants.filter(id=self.user.id).exists():
             self.send_error(f'user="{self.user}" is not a participant of workspace_id={workspace.id}')
             return False
         return True
