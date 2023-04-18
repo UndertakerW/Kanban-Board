@@ -152,7 +152,7 @@
     width: 310px;
     margin-top: 24px;
     margin-right: 24px;
-    height: 200px;
+    height: auto;
 }
 
 .grouped-columns-wrapper {
